@@ -4,12 +4,13 @@ import UsersPage from './HomePage';
 import SettingsPage from './SettingsPage';
 import { Ionicons } from '@expo/vector-icons';
 import Color from '../constants/Color';
-import VideoCallPage from './VideoCall';
+import CallsPage from './Calls';
 const Tabs = createBottomTabNavigator()
 
 const FeedPage = () => {
     return (
-        <Tabs.Navigator initialRouteName='Chats'
+        <Tabs.Navigator  initialRouteName='Chats'
+            
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color}) => {
                     let iconName;
@@ -22,14 +23,19 @@ const FeedPage = () => {
                     }
                     return <Ionicons name={iconName} size={30} color={color} />;
                 },
+                tabBarStyle: { backgroundColor: Color.background_color, height:60, borderTopColor:Color.background_color },
+
+                
             })}
             tabBarOptions={{
                 activeTintColor: Color.primary_color,
                 inactiveTintColor: 'gray',
+                
+                
             }}
         >  
            <Tabs.Screen  name='Chats' options={{headerStyle:{backgroundColor:Color.background_color, height:70}}}  component={UsersPage} />
-            <Tabs.Screen name='Calls' options={{headerStyle:{backgroundColor:Color.background_color}}} component={VideoCallPage} />
+            <Tabs.Screen name='Calls' options={{headerStyle:{backgroundColor:Color.background_color}}} component={CallsPage} />
             <Tabs.Screen name='Settings' options={{headerStyle:{backgroundColor:Color.background_color}}}  component={SettingsPage} /> 
         </Tabs.Navigator>
     )

@@ -57,13 +57,13 @@ function UsersPage(){
 
     return (
         <View style={styles.mainContainer}>
-            {/* <View style={styles.searchContainer}> */}
-            <Searchbar style={{height:50, width:'auto', fontSize:12}}
+            <View style={styles.searchContainer}>
+            <Searchbar style={{height:50, width:'auto', fontSize:12, backgroundColor:'#e4ebf1'}}
                 placeholder="Search"
                 onChangeText={setSearchQuery}
                 value={searchQuery}
                 />
-                {/* </View> */}
+                </View>
             
             <FlatList data={DATA} renderItem={item => renderItem(item)} keyExtractor={ item => item.id} />
             <FloatingAction
@@ -91,7 +91,8 @@ const styles = StyleSheet.create({
         height:40,
         alignItems:'center',
         justifyContent:'center',
-        alignContent:'center'
+        alignContent:'center',
+        marginVertical: 12
     }
 })
 
