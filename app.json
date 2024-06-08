@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "AwesomeApp",
+    "slug": "AwesomeApp",
+    "version": "1.0.0",
+    "bacgroundColor": "#1e085a",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1e085a"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1e085a"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "backgroundColor": "#1e085a"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}
