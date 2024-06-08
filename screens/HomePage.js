@@ -3,6 +3,8 @@ import ChatComponent from "../components/chatComponent";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { FloatingAction } from "react-native-floating-action";
 import { Alert } from "react-native";
+import { useState } from "react";
+import { Searchbar } from 'react-native-paper';
 import Color from "../constants/Color";
 
 const DATA = [
@@ -46,6 +48,7 @@ const actions = [
   ];
 
 function UsersPage(){
+    const [searchQuery, setSearchQuery] =  useState('');
     const navigate = useNavigation()
     const route = useRoute()
     const renderItem =(item)=> {
@@ -54,6 +57,14 @@ function UsersPage(){
 
     return (
         <View style={styles.mainContainer}>
+            {/* <View style={styles.searchContainer}> */}
+            <Searchbar style={{height:50, width:'auto', fontSize:12}}
+                placeholder="Search"
+                onChangeText={setSearchQuery}
+                value={searchQuery}
+                />
+                {/* </View> */}
+            
             <FlatList data={DATA} renderItem={item => renderItem(item)} keyExtractor={ item => item.id} />
             <FloatingAction
                 actions={actions}
@@ -73,6 +84,14 @@ const styles = StyleSheet.create({
         flex:1,
         backgroundColor: Color.background_color,
         paddingVertical: 4
+    },
+    searchContainer:{
+        margin:4,
+        width: "150",
+        height:40,
+        alignItems:'center',
+        justifyContent:'center',
+        alignContent:'center'
     }
 })
 

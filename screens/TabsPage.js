@@ -15,8 +15,8 @@ const FeedPage = () => {
                     let iconName;
                     if (route.name === 'Chats') {
                         iconName = focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses';
-                    } else if (route.name === 'Video Calls') {
-                        iconName = focused ? 'videocam' : 'videocam-outline';
+                    } else if (route.name === 'Calls') {
+                        iconName = focused ? 'call' : 'call-outline';
                     }else if ( route.name === 'Settings') {
                         iconName = focused ? 'settings': 'settings-outline'
                     }
@@ -26,11 +26,10 @@ const FeedPage = () => {
             tabBarOptions={{
                 activeTintColor: Color.primary_color,
                 inactiveTintColor: 'gray',
-            
             }}
         >  
-           <Tabs.Screen  name='Chats' options={{headerStyle:{backgroundColor:Color.background_color}}}  component={UsersPage} />
-            <Tabs.Screen name='Video Calls' options={{headerStyle:{backgroundColor:Color.background_color}}} component={VideoCallPage} />
+           <Tabs.Screen  name='Chats' options={{headerStyle:{backgroundColor:Color.background_color, height:70}}}  component={UsersPage} />
+            <Tabs.Screen name='Calls' options={{headerStyle:{backgroundColor:Color.background_color}}} component={VideoCallPage} />
             <Tabs.Screen name='Settings' options={{headerStyle:{backgroundColor:Color.background_color}}}  component={SettingsPage} /> 
         </Tabs.Navigator>
     )
