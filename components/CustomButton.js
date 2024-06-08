@@ -1,6 +1,5 @@
 import {Text, Pressable, View, StyleSheet} from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
-import FontAwesome from '@expo/vector-icons/FontAwesome'
 import Color from '../constants/Color';
 
 
@@ -9,14 +8,14 @@ function CustomButton(props) {
     return (
         <Pressable
             onPress={props.onPress}
-            android_ripple={true}
             style={({ pressed }) => [
                 props.primary && styles.buttonPrimary,
                 props.secondary && styles.buttonSecondary,
                 pressed && styles.pressed
             ]}
+
         >
-            {!props.iconName && (
+
                 <View style={{ justifyContent: 'center', alignItems: 'center', alignContent: 'center' }}>
                     <Text
                         style={[
@@ -27,13 +26,8 @@ function CustomButton(props) {
                         {props.title}
                     </Text>
                 </View>
-            )}
+            
 
-            {props.iconName && (
-                <FontAwesome.Button name={props.iconName} backgroundColor={props.color}>
-                    {props.iconText}
-                </FontAwesome.Button>
-            )}
         </Pressable>
     );
 }
@@ -74,7 +68,5 @@ const styles =  StyleSheet.create( {
         borderColor: Color.primary_color,
         borderWidth: 1
     },
-    pressed:{
-        opacity: 0.5
-    }
+ 
 })
