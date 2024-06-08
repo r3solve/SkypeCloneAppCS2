@@ -37,13 +37,19 @@ const actions = [
       text: "Cloud Copilot",
       icon: require("../assets/copilot.png"),
       name: "copilot",
-      position: 1
+      position: 1,
+      color : Color.tertiary_color,
+      size:50
     },
     {
       text: "Text",
       icon: require("../assets/chat.png"),
       name: "text",
-      position: 3
+      position: 3,
+      iconWidth: 60,
+      iconHeight: 60,
+      color: Color.primary_color,
+      size: 50
     },
   ];
 
@@ -71,7 +77,7 @@ function UsersPage(){
                 color={Color.primary_color}
                 onPressItem={name => {
                     if (name === 'copilot'){
-                        Alert.alert('You pressed', name)
+                        navigate.navigate('Home')
                     }
                 }}
             />

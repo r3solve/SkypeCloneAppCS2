@@ -12,6 +12,7 @@ import HomePage from './screens/SignInPage';
 import ChatDetailsPage from './screens/ChatDetails';
 import Color from './constants/Color';
 import SignInPage from './screens/SignInPage';
+import GetStartedPage from './screens/GetStartedPage';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -19,7 +20,8 @@ export default function App() {
     <SafeAreaProvider>
     <SafeAreaView style={styles.appContainer}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName='GetStarted'>
+        <Stack.Navigator initialRouteName='get-started'>
+          <Stack.Screen options={{headerShown:false}} name='get-started' component={GetStartedPage} />
           <Stack.Screen options={{headerShown:false}} name="Feed" component={FeedPage} />
           <Stack.Screen name="Home" options={{headerShown:false}} component={HomePage} />
           <Stack.Screen name="Thread"  options={{headerStyle :{ backgroundColor: Color.primary_color}}} component={HomePage}  />

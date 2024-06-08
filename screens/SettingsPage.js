@@ -1,18 +1,22 @@
 import { useNavigation } from "@react-navigation/native"
 import { View, Text, Button, StyleSheet } from "react-native"
+import Color from "../constants/Color";
 
 
 function SettingsPage(){
     const nav = useNavigation();
     return (
-        <View>
-            <Text>Settings</Text>
-            <Button title="Go back" onPress={()=> nav.goBack()} ></Button>
+        <View style={styles.mainContainer}>
+            
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+    mainContainer:{
+        flex:1,
+        backgroundColor: Color.background_color
+    }
 
 })
 
