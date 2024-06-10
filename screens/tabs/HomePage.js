@@ -1,11 +1,11 @@
 import {Button, FlatList, StyleSheet, Text, View} from "react-native";
-import ChatComponent from "../components/chatComponent";
+import ChatComponent from "../../components/chatComponent";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { FloatingAction } from "react-native-floating-action";
 import { Alert } from "react-native";
 import { useState } from "react";
 import { Searchbar } from 'react-native-paper';
-import Color from "../constants/Color";
+import Color from "../../constants/Color";
 
 const DATA = [
   {id: 1,  message: "Hello there", user: 'Jane Doe'},
@@ -35,7 +35,7 @@ const DATA = [
 const actions = [
     {
       text: "Cloud Copilot",
-      icon: require("../assets/copilot.png"),
+      icon: require("../../assets/copilot.png"),
       name: "copilot",
       position: 1,
       color : Color.tertiary_color,
@@ -43,7 +43,7 @@ const actions = [
     },
     {
       text: "Text",
-      icon: require("../assets/chat.png"),
+      icon: require("../../assets/chat.png"),
       name: "text",
       position: 3,
       iconWidth: 60,
@@ -53,7 +53,7 @@ const actions = [
     },
   ];
 
-function UsersPage(){
+function HomePage(){
     const [searchQuery, setSearchQuery] =  useState('');
     const navigate = useNavigation()
     const route = useRoute()
@@ -102,4 +102,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default UsersPage
+export default HomePage

@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native"
 import { View, Text, Button, StyleSheet } from "react-native"
-import Color from "../constants/Color";
+import Color from "../../constants/Color";
 
 
 function SettingsPage(){

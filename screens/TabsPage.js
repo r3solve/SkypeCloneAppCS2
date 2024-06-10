@@ -1,13 +1,14 @@
 import { View, Text } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import UsersPage from './HomePage';
-import SettingsPage from './SettingsPage';
+import UsersPage from './tabs/HomePage'
+
+import SettingsPage from './tabs/SettingsPage';
 import { Ionicons } from '@expo/vector-icons';
 import Color from '../constants/Color';
-import CallsPage from './Calls';
+import CallsPage from './tabs/Calls';
 const Tabs = createBottomTabNavigator()
 
-const FeedPage = () => {
+const HomePage = () => {
     return (
         <Tabs.Navigator  initialRouteName='Chats'
             
@@ -42,4 +43,4 @@ const FeedPage = () => {
 }
 
 
-export default FeedPage
+export default HomePage

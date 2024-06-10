@@ -34,8 +34,8 @@ function SignInPage() {
             <TouchableOpacity style={styles.forgotPassword} onPress={() => {/* Add forgot password logic */}}>
                 <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
-            <CustomButton  title="Sign In" primary='true' onPress={() => navigation.navigate('Feed')} />
-            <TouchableOpacity style={styles.signUp} onPress={() => navigation.navigate('SignUp')}>
+            <CustomButton  title="Sign In" primary='true' onPress={() => navigation.navigate('home')} />
+            <TouchableOpacity style={styles.signUp} onPress={() => navigation.navigate('register')}>
                 <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>
             </TouchableOpacity>
 

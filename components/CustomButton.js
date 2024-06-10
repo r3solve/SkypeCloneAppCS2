@@ -1,4 +1,4 @@
-import {Text, Pressable, View, StyleSheet} from 'react-native'
+import {Text, Pressable, View, StyleSheet, Touchable} from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Color from '../constants/Color';
 
@@ -38,7 +38,7 @@ const styles =  StyleSheet.create( {
     buttonPrimary: {
         borderRadius: 8,
         fontSize: 20,
-        width: "85%",
+        width: "70%",
         height: 45,
         margin: 12,
         backgroundColor: Color.primary_color,
@@ -47,26 +47,29 @@ const styles =  StyleSheet.create( {
     },
      buttonTextPrimary: {
         color:"#f5fafc",
-        fontWeight: 600,
-        fontSize: 18,
-        paddingTop: 8
+        fontWeight: 400,
+        fontSize: 14,
+        paddingTop: 12
     },
     buttonTextSecondary : {
         color:Color.primary_color,
-        fontWeight: 600,
-        paddingTop: 7,
-        fontSize:18
+        fontWeight: 400,
+        paddingTop: 12,
+        fontSize:14
         
     },
     buttonSecondary: {
         borderRadius: 8,
         fontSize: 20,
-        width: "80%",
+        width: "70%",
         height: 45,
         margin: 12,
         backgroundColor: 'white',
         borderColor: Color.primary_color,
         borderWidth: 1
     },
+    pressed: {
+        opacity: 0.7
+    }
  
 })
