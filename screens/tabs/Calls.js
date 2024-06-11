@@ -1,51 +1,84 @@
 import * as React from 'react';
-import { FAB, Portal, Provider as PaperProvider } from 'react-native-paper';
+import { useState } from 'react';
+import { FAB, Portal, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import Color from '../../constants/Color';
-import { Alert } from 'react-native';
+import { Alert, View, Text, ScrollView, FlatList, StyleSheet } from 'react-native';
+import AccountBar from '../../components/AccountBar';
+import { useContext } from 'react';
+import { ChatStoreContext } from '../../store/chatstore-context';
+import { useNavigation } from '@react-navigation/native';
+
+const DATA = [
+  { id: 1, bio: "Coffee addict ☕, code lover 💻", user: 'Jane Doe' },
+  { id: 2, bio: "Tech geek 🤓, always exploring 🚀", user: 'Thomas Hanks' },
+  { id: 3, bio: "Morning person ☀️, nature enthusiast 🌿", user: 'Alice Johnson' },
+  { id: 4, bio: "Web developer 💻, music lover 🎵", user: 'Bob Smith' },
+  { id: 5, bio: "Adventure seeker 🌍, dog mom 🐶", user: 'Charlie Brown' },
+  { id: 6, bio: "Bookworm 📚, tea lover ☕", user: 'Diana Prince' },
+  { id: 7, bio: "Fitness freak 💪, travel junkie ✈️", user: 'Edward Norton' },
+  { id: 8, bio: "Foodie 🍔, movie buff 🎬", user: 'Fiona Shrek' },
+  { id: 9, bio: "Creative mind 🎨, night owl 🦉", user: 'George Clooney' },
+  { id: 10, bio: "Dreamer ✨, always smiling 😊", user: 'Helen Mirren' },
+  { id: 11, bio: "Work hard, play harder 🎉, coffee addict ☕", user: 'Iris West' },
+  { id: 12, bio: "Pirate at heart 🏴‍☠️, rum enthusiast 🥃", user: 'Jack Sparrow' },
+  { id: 13, bio: "Netflix and chill expert 🍿, cat lover 🐱", user: 'Karen Page' },
+  { id: 14, bio: "Movie fanatic 🎥, beach bum 🏖️", user: 'Leonardo DiCaprio' },
+  { id: 15, bio: "Life's too short for bad movies 🎬, wine lover 🍷", user: 'Meryl Streep' },
+  { id: 16, bio: "Coffee first, questions later ☕, dreamer ✨", user: 'Natalie Portman' },
+  { id: 17, bio: "Sarcastic by nature 😏, book lover 📖", user: 'Oscar Wilde' },
+  { id: 18, bio: "Always hungry 🍔, movie buff 🎬", user: 'Paul Rudd' },
+  { id: 19, bio: "Film fanatic 🎞️, foodie 🍕", user: 'Quentin Tarantino' },
+  { id: 20, bio: "Wanderlust ✈️, night owl 🌙", user: 'Rachel Green' }
+];
 
 const CallsPage = () => {
-  const [state, setState] = React.useState({ open: false });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [results, setResults] = useState(DATA);
 
-  const onStateChange = ({ open }) => setState({ open });
+  const ChatContxt = useContext(ChatStoreContext)
+  const navigator = useNavigation()
+  const handleFilter = (text) => {
+    setSearchQuery(text);
+    let filteredData = DATA.filter(item => item.user.toLowerCase().includes(text.toLowerCase()));
+    setResults(filteredData);
+  }
 
-  const { open } = state;
+  const addUserToChats = (user)=> {
+    if (!(ChatContxt.chats.includes(user))) {
+      ChatContxt.addChat(user)
+      navigator.goBack()
+    }
+    
+  }
+
+  const renderItem = ({ item }) => {
+    return <AccountBar onPress={()=>{}} user={'@' + item.user} onPress={() => {addUserToChats(item)}}>{item.bio}</AccountBar>;
+  }
 
   return (
-    <PaperProvider>
-      <Portal>
-        <FAB.Group
-          open={open}
-          visible
-          icon={open ? 'close' : 'phone'}
-          style={{backgroundColor:'#EDF7FF'}}
-          actions={[
-            {
-              icon: 'video',
-              label: 'Video Call',
-              onPress: () => Alert.alert('Pressed Video'),
-              style: { backgroundColor: Color.primary_color }, // Customize the background color of each action
-
-            },
-            {
-              icon:'phone',
-              label: 'Voice Call',
-              onPress: () => Alert.alert('Pressed Voice'),
-              style: { backgroundColor: Color.primary_color }, // Customize the background color of each action
-
-            },
-          ]}
-          onStateChange={onStateChange}
-          onPress={() => {
-            if (open) {
-              // do something if the speed dial is open
-            }
-          }}
-          fabStyle={{ backgroundColor: Color.primary_color}} // Customize the background color of the main FAB
-        />
-
-      </Portal>
-    </PaperProvider>
+    <View style={styles.container}>
+      <Searchbar
+        style={{ height: 50, width: 'auto', fontSize: 12, backgroundColor: '#e4ebf1' }}
+        placeholder="@username"
+        onChangeText={(text) => handleFilter(text)}
+        value={searchQuery}
+        onClearIconPress={() => setSearchQuery('')}
+        placeholderTextColor={"grey"}
+      />
+      <FlatList
+        data={results}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+      />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Color.background_color
+  }
+})
 
 export default CallsPage;

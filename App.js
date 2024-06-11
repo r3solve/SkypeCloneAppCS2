@@ -15,12 +15,21 @@ import CreateAccountPage from './screens/CreateAccountPage';
 import SetUpAccountPage from './screens/SetUpAccountPage';
 import HomePage from './screens/TabsPage';
 import ChatDetailsPage from './screens/ChatDetails';
+import HelpScreen from './screens/settings/HelpScreen';
+import AboutScreen from './screens/settings/AboutScreen'; // Import AboutScreen
+import AccountScreen from './screens/settings/AccountScreen'; // Import AccountScreen
+import PrivacyScreen from './screens/settings/PrivacyScreen'; // Import PrivacyScreen
+import NotificationsScreen from './screens/settings/NotificationsScreen'; // Import NotificationsScreen
+import ChatsScreen from './screens/settings/ChatsScreen'; // Import ChatsScreen
+import LanguageScreen from './screens/settings/LanguageScreen';
+import { ChatStoreContextProvider } from './store/chatstore-context';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
   return (
     <SafeAreaProvider>
     <SafeAreaView style={styles.appContainer}>
+      <ChatStoreContextProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='get-started'>
           <Stack.Group name='auth' screenOptions={{headerShown:false}}>
@@ -29,21 +38,33 @@ export default function App() {
             <Stack.Screen name='setup' component={SetUpAccountPage} />
             <Stack.Screen  name='get-started' component={GetStartedPage} />
           </Stack.Group>
-        <Stack.Group name='home' screenOptions={{headerShown:false}} >
-          <Stack.Screen name='home'  component={HomePage} ></Stack.Screen>
-        </Stack.Group>
-        <Stack.Group screenOptions={{headerStyle:{backgroundColor:Color.background_color},
-         contentStyle:{
-          backgroundColor:Color.background_color
-        },title: ''
-        
-        }}>
-          <Stack.Screen name='thread'  component={ChatDetailsPage}></Stack.Screen>
-        </Stack.Group>
-
-
+          <Stack.Group name='home' screenOptions={{headerShown:false}} >
+            <Stack.Screen name='home'  component={HomePage} ></Stack.Screen>
+          </Stack.Group>
+          <Stack.Group name='settings' screenOptions={{headerStyle:{backgroundColor:Color.background_color},
+            contentStyle:{
+              backgroundColor:Color.background_color
+            },
+            title: ''
+          }}>
+            <Stack.Screen name='help'  component={HelpScreen}></Stack.Screen>
+            <Stack.Screen name='about'  component={AboutScreen}></Stack.Screen>
+            <Stack.Screen name='account'  component={AccountScreen}></Stack.Screen>
+            <Stack.Screen name='privacy'  component={PrivacyScreen}></Stack.Screen>
+            <Stack.Screen name='notifications'  component={NotificationsScreen}></Stack.Screen>
+            <Stack.Screen name='chats'  component={ChatsScreen}></Stack.Screen>
+            <Stack.Screen name='language'  component={LanguageScreen}></Stack.Screen>
+          </Stack.Group>
+          <Stack.Group screenOptions={{headerStyle:{backgroundColor:Color.background_color},
+            contentStyle:{
+              backgroundColor:Color.background_color
+            },title: ''
+          }}>
+            <Stack.Screen name='thread'  component={ChatDetailsPage}></Stack.Screen>
+          </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>
+      </ChatStoreContextProvider>
     </SafeAreaView>
     </SafeAreaProvider>
   )

@@ -3,9 +3,10 @@ import ChatComponent from "../../components/chatComponent";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { FloatingAction } from "react-native-floating-action";
 import { Alert } from "react-native";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Searchbar } from 'react-native-paper';
 import Color from "../../constants/Color";
+import { ChatStoreContext } from "../../store/chatstore-context";
 
 const DATA = [
   {id: 1,  message: "Hello there", user: 'Jane Doe'},
@@ -54,6 +55,8 @@ const actions = [
   ];
 
 function HomePage(){
+    const chatsContxt = useContext(ChatStoreContext)
+    const allChats = chatsContxt.chats
     const [searchQuery, setSearchQuery] =  useState('');
     const navigate = useNavigation()
     const route = useRoute()
@@ -71,7 +74,7 @@ function HomePage(){
                 />
                 </View>
             
-            <FlatList data={DATA} renderItem={item => renderItem(item)} keyExtractor={ item => item.id} />
+            <FlatList data={allChats} renderItem={item => renderItem(item)} keyExtractor={ item => item.id} />
             <FloatingAction
                 actions={actions}
                 color={Color.primary_color}
