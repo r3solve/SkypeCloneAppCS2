@@ -69,7 +69,7 @@ export default function App() {
                     headerRight: () => (<View>
                       <Text>{route.params.username}</Text>
                     </View>),
-                    headerLeft: () => (<HeaderBack onPress={()=> navigation.navigate('home')} imageUrl="./assets/logo.png" ></HeaderBack> ),
+                    headerLeft: () => (<HeaderBack username={route.params.username.slice(0,11)} onPress={()=> navigation.navigate('home')} imageUrl="./assets/logo.png" ></HeaderBack> ),
                 };
             }} component={ChatDetailsPage}></Stack.Screen>
 
