@@ -60,8 +60,13 @@ function HomePage(){
     const [searchQuery, setSearchQuery] =  useState('');
     const navigate = useNavigation()
     const route = useRoute()
+
+    const handleDetailsPageVisit = (username) => {
+        chatsContxt.setCurrentUser(username)
+        navigate.navigate('thread', {username: username})
+    }
     const renderItem =(item)=> {
-        return <ChatComponent user={item.item.user} message={item.item.message} onPress={()=> navigate.navigate('thread',{id:item.item.id}) } />
+        return <ChatComponent user={item.item.user} message={item.item.message} onPress={(item) => console.log(item)} />
     }
 
     return (

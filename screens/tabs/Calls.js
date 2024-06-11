@@ -33,14 +33,21 @@ const DATA = [
 
 const CallsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [results, setResults] = useState(DATA);
+  const [results, setResults] = useState([]);
 
   const ChatContxt = useContext(ChatStoreContext)
   const navigator = useNavigation()
+ 
   const handleFilter = (text) => {
     setSearchQuery(text);
-    let filteredData = DATA.filter(item => item.user.toLowerCase().includes(text.toLowerCase()));
-    setResults(filteredData);
+    if (text.length > 0 ){
+     let filteredData = DATA.filter(item => item.user.toLowerCase().includes(text.toLowerCase()));
+      setResults(filteredData);
+    }
+    else {
+      setResults([])
+    }
+    
   }
 
   const addUserToChats = (user)=> {
@@ -65,6 +72,12 @@ const CallsPage = () => {
         onClearIconPress={() => setSearchQuery('')}
         placeholderTextColor={"grey"}
       />
+      { 
+      searchQuery.length == 0 && <View style={styles.noContentTextContainer}>
+        <Text style={styles.noContentText}>Search for User</Text>
+        </View>
+      }
+      
       <FlatList
         data={results}
         renderItem={renderItem}
@@ -78,6 +91,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Color.background_color
+  },
+  noContentTextContainer:{
+    flex:1,
+    padding:10,
+    alignContent:'center',
+    justifyContent:'center'
+  },
+  noContentText:{
+    fontSize:20,
+    fontWeight:'light',
+    textAlign:'center',
+    color: '#c5c1c1'
   }
 })
 

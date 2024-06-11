@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Button, FlatList, Text, TextInput, View, StyleSheet,ScrollView, Platform } from "react-native";
+import { Button, FlatList, Text, TextInput, View, StyleSheet,ScrollView, Platform, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import Color from '../constants/Color'; // Ensure Color is properly imported
+import { ChatStoreContext } from '../store/chatstore-context';
 
 
 function ChatDetailsPage() {
     const navigation = useNavigation();
+    const ChatContxt = useContext(ChatStoreContext)
+    const activeChatUser = ChatContxt.currentActiveUser
     const route = useRoute();
     const { id } = route.params; // Destructure id from route params
 
@@ -25,6 +28,7 @@ function ChatDetailsPage() {
                 { id: (messages.length + 1).toString(), text: newMessage, sender: 'me' },
             ]);
             setNewMessage('');
+            Alert.alert(activeChatUser)
         }
     };
 
@@ -39,6 +43,7 @@ function ChatDetailsPage() {
                 renderItem={({ item }) => (
                     <View style={[styles.messageContainer, item.sender === 'me' ? styles.myMessage : styles.otherMessage]}>
                         <Text style={styles.messageText}>{item.text}</Text>
+                        
                     </View>
                 )}
                 style={styles.messagesList}

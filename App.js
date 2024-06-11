@@ -60,7 +60,12 @@ export default function App() {
               backgroundColor:Color.background_color
             },title: ''
           }}>
-            <Stack.Screen name='thread'  component={ChatDetailsPage}></Stack.Screen>
+            <Stack.Screen name='thread' options={({ route }) => {
+                return {
+                    title: route.params.username,
+                };
+            }} component={ChatDetailsPage}></Stack.Screen>
+
           </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>

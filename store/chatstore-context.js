@@ -3,12 +3,16 @@ import { createContext, useState } from "react";
 const ChatStoreContext = createContext({
     chats: [],
     addChat: (id) => {},
-    removeChat: (id) => {}
+    removeChat: (id) => {},
+    
+    currentActiveUser:"",
+    setCurrentUser: (username) => {},
+    removeCurrentUser: (username) => {},
 });
 
 function ChatStoreContextProvider({ children }) {
     const [currentChats, setCurrentChats] = useState([]);
-
+    const [currentUser, changeCurrentUser] = useState('')
     const addChat = (id) => {
         setCurrentChats((prevChats) => [...prevChats, id]);
     };
@@ -16,11 +20,23 @@ function ChatStoreContextProvider({ children }) {
     const removeChat = (id) => {
         setCurrentChats((prevChats) => prevChats.filter(chatId => chatId !== id));
     };
+    
+    const setCurrentUser = (username) => {
+        changeCurrentUser(username)
+    }
+
+    const removeCurrentUser = (username) => {
+        changeCurrentUser('')
+    }
+    
 
     const values = {
         chats: currentChats,
         addChat: addChat,
-        removeChat: removeChat
+        removeChat: removeChat,
+        currentUser: currentUser,
+        setCurrentUser: setCurrentUser,
+        removeCurrentUser: removeCurrentUser
     };
 
     return (
