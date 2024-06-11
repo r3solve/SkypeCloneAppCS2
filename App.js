@@ -23,6 +23,9 @@ import NotificationsScreen from './screens/settings/NotificationsScreen'; // Imp
 import ChatsScreen from './screens/settings/ChatsScreen'; // Import ChatsScreen
 import LanguageScreen from './screens/settings/LanguageScreen';
 import { ChatStoreContextProvider } from './store/chatstore-context';
+import { Avatar } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
+import HeaderBack from './components/HeaderBack';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -60,9 +63,13 @@ export default function App() {
               backgroundColor:Color.background_color
             },title: ''
           }}>
-            <Stack.Screen name='thread' options={({ route }) => {
+            <Stack.Screen name='thread' options={({ route, navigation }) => {
                 return {
-                    title: route.params.username,
+                  headerBackTitle:false,
+                    headerRight: () => (<View>
+                      <Text>{route.params.username}</Text>
+                    </View>),
+                    headerLeft: () => (<HeaderBack onPress={()=> navigation.navigate('home')} imageUrl="./assets/logo.png" ></HeaderBack> ),
                 };
             }} component={ChatDetailsPage}></Stack.Screen>
 

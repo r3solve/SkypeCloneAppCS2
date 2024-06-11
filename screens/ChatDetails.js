@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Button, FlatList, Text, TextInput, View, StyleSheet,ScrollView, Platform, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
@@ -16,10 +16,11 @@ function ChatDetailsPage() {
     const [messages, setMessages] = useState([
         { id: '1', text: 'Hello!', sender: 'user1' },
         { id: '2', text: 'Hi there!', sender: 'user2' },
-        // Add initial messages here if needed
+
     ]);
 
     const [newMessage, setNewMessage] = useState('');
+    
 
     const sendMessage = () => {
         if (newMessage.trim() !== '') {
@@ -28,7 +29,7 @@ function ChatDetailsPage() {
                 { id: (messages.length + 1).toString(), text: newMessage, sender: 'me' },
             ]);
             setNewMessage('');
-            Alert.alert(activeChatUser)
+            Alert.alert("Active User", route.params.username)
         }
     };
 
@@ -49,6 +50,20 @@ function ChatDetailsPage() {
                 style={styles.messagesList}
             />
             <View style={styles.inputContainer}>
+            <Ionicons
+                    name="camera"
+                    size={25}
+                    color={Color.primary_color}
+                    onPress={()=> Alert.alert('Camera pressed')}
+                    style={styles.sendButton}
+                />
+                <Ionicons
+                    name="attach"
+                    size={25}
+                    color={Color.primary_color}
+                    onPress={()=> Alert.alert('aattch pressed')}
+                    style={styles.sendButton}
+                />
                 <TextInput
                     style={styles.input}
                     placeholder="Type a message..."
@@ -57,7 +72,7 @@ function ChatDetailsPage() {
                 />
                 <Ionicons
                     name="send"
-                    size={30}
+                    size={25}
                     color={Color.primary_color}
                     onPress={sendMessage}
                     style={styles.sendButton}
@@ -108,7 +123,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     sendButton: {
-        padding: 10,
+        padding: 4,
     },
 });
 

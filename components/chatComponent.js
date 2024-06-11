@@ -1,5 +1,6 @@
 import {View, Text, Pressable, StyleSheet,Image} from 'react-native'
 import Color from '../constants/Color'
+import { Badge } from 'react-native-paper'
 
 
 const ChatComponent  = props => {
