@@ -23,8 +23,7 @@ import NotificationsScreen from './screens/settings/NotificationsScreen'; // Imp
 import ChatsScreen from './screens/settings/ChatsScreen'; // Import ChatsScreen
 import LanguageScreen from './screens/settings/LanguageScreen';
 import { ChatStoreContextProvider } from './store/chatstore-context';
-import { Avatar } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
+
 import HeaderBack from './components/HeaderBack';
 
 export default function App() {
@@ -41,7 +40,7 @@ export default function App() {
             <Stack.Screen name='setup' component={SetUpAccountPage} />
             <Stack.Screen  name='get-started' component={GetStartedPage} />
           </Stack.Group>
-          <Stack.Group name='home' screenOptions={{headerShown:false}} >
+          <Stack.Group  screenOptions={{headerShown:false}} >
             <Stack.Screen name='home'  component={HomePage} ></Stack.Screen>
           </Stack.Group>
           <Stack.Group name='settings' screenOptions={{headerStyle:{backgroundColor:Color.background_color},

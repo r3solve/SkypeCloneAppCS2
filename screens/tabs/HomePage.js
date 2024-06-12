@@ -1,35 +1,49 @@
-import { Button, FlatList, StyleSheet, Text, View } from "react-native";
+import { Button, FlatList, StyleSheet, Text, View, Modal, ScrollView } from "react-native";
 import ChatComponent from "../../components/chatComponent";
 import { useEffect, useCallback, useContext, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { FloatingAction } from "react-native-floating-action";
 import { Alert } from "react-native";
-import { Searchbar } from 'react-native-paper';
+import { Searchbar, FAB } from 'react-native-paper';
 import Color from "../../constants/Color";
 import { ChatStoreContext } from "../../store/chatstore-context";
+import { Ionicons } from "@expo/vector-icons";
+import AccountBar from "../../components/AccountBar";
 
-const DATA = [
-  { id: 1, message: "Hello there", user: 'Jane Doe' },
-  { id: 2, message: "How are you doing", user: 'Thomas Hanks' },
-  { id: 3, message: "Good morning", user: 'Alice Johnson' },
-  { id: 4, message: "What's up?", user: 'Bob Smith' },
-  { id: 5, message: "Have a nice day", user: 'Charlie Brown' },
-  { id: 6, message: "See you soon", user: 'Diana Prince' },
-  { id: 7, message: "Take care", user: 'Edward Norton' },
-  { id: 8, message: "Goodbye", user: 'Fiona Shrek' },
-  { id: 9, message: "Nice to meet you", user: 'George Clooney' },
-  { id: 10, message: "Welcome!", user: 'Helen Mirren' },
-  { id: 11, message: "Have a good one", user: 'Iris West' },
-  { id: 12, message: "Thank you", user: 'Jack Sparrow' },
-  { id: 13, message: "You're welcome", user: 'Karen Page' },
-  { id: 14, message: "Yes, please", user: 'Leonardo DiCaprio' },
-  { id: 15, message: "No, thank you", user: 'Meryl Streep' },
-  { id: 16, message: "Excuse me", user: 'Natalie Portman' },
-  { id: 17, message: "I'm sorry", user: 'Oscar Wilde' },
-  { id: 18, message: "No problem", user: 'Paul Rudd' },
-  { id: 19, message: "All the best", user: 'Quentin Tarantino' },
-  { id: 20, message: "Good night", user: 'Rachel Green' }
+let DATA = [
+  {
+    id: 1,
+    createdBy: 'john55',
+    receiver: 'bob44',
+    link: `cloud/1`,
+    chats: [
+      { sender: 'john55', content: 'Can you review this document?' },
+      { sender: 'john55', content: 'I have made some mistakes so be careful' }
+    ]
+  },
+  {
+    id: 2,
+    createdBy: 'john55',
+    receiver: 'bob22',
+    link: `cloud/2`,
+    chats: [
+      { sender: 'Alice Smith', content: 'Please check the latest report.' },
+      { sender: 'Bob Johnson', content: 'Sure, I will review it.' }
+    ]
+  },
+
+  {
+    id: 3,
+    createdBy: 'john',
+    receiver: 'bob22',
+    link: `cloud/2`,
+    chats: [
+      { sender: 'Alice Smith', content: 'Please check the latest report.' },
+      { sender: 'Bob Johnson', content: 'Sure, I will review it.' }
+    ]
+  },
+ 
 ];
+
 
 const actions = [
   {
@@ -53,31 +67,24 @@ const actions = [
 ];
 
 function HomePage() {
+  const [isModalVisible, setModalVisible] = useState(false);
   const chatsContxt = useContext(ChatStoreContext);
   const allChats = chatsContxt.chats;
+  const loggedInUser = 'john55'
   const [searchQuery, setSearchQuery] = useState('');
   const [chatItem, setActiveUserState] = useState({});
   const navigate = useNavigation();
   const route = useRoute();
+  const [filteredData, setFilteredData] = useState([])
 
-  const handleDetailsPageVisit = useCallback((item) => {
-    setActiveUserState((prev) => {
-      chatsContxt.setCurrentUser(item.user);
-      return prev;
-    });
-    navigate.navigate('thread', { username: item.user });
-  }, [chatsContxt, navigate]);
+  useEffect(() => {
+    setFilteredData(DATA.filter(chat => chat.createdBy === loggedInUser));
+  }, [loggedInUser]);
 
-  const renderItem = useCallback(({ item }) => {
-    return (
-      <ChatComponent
-        user={item.user}
-        message={item.message}
-        onPress={() => handleDetailsPageVisit(item)}
-      />
-    );
-  }, [handleDetailsPageVisit]);
 
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
   return (
     <View style={styles.mainContainer}>
       <View style={styles.searchContainer}>
@@ -88,22 +95,53 @@ function HomePage() {
           value={searchQuery}
         />
       </View>
-
       <FlatList
-        data={allChats}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
+        data={filteredData}
+        renderItem={({item}) => <ChatComponent user={item.receiver} message={item.chats[0].content} />}
+        keyExtractor={item => item.id}
       />
-      <FloatingAction
-        actions={actions}
-        color={Color.primary_color}
-        onPressItem={name => {
-          if (name === 'copilot') {
-            navigate.navigate('Home');
-          }
-        }}
-      />
-    </View>
+        <Modal animationType="slide" transparent={true} visible={isModalVisible} style={{height:"70%"}}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <View style={styles.topModal}>
+                <Searchbar
+                  style={{ height: 50, width: '80%', fontSize: 12, backgroundColor: '#e4ebf1', marginRight:15 }}
+                  placeholder="Contacts"
+                  value={searchQuery}
+                  placeholderTextColor={'gray'}
+                />
+                <Ionicons  color='#888181' style={{alignSelf:'center'}} size={40} onPress={toggleModal} name='close'></Ionicons>
+              </View>
+            
+              <View style={styles.searchContent}>
+                <ScrollView>
+                <AccountBar></AccountBar>
+                <AccountBar></AccountBar>
+                <AccountBar></AccountBar>
+                <AccountBar></AccountBar>
+                <AccountBar></AccountBar>
+                <AccountBar></AccountBar>
+                <AccountBar></AccountBar>
+                <AccountBar></AccountBar>
+                <AccountBar></AccountBar>
+                <AccountBar></AccountBar>
+
+
+                </ScrollView>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <FAB
+            icon="plus"
+            style={styles.fab}
+            onPress={toggleModal}
+            color={Color.background_color}
+          
+          />
+      </View>
+
+    
   );
 }
 
@@ -120,7 +158,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 12
+  },
+  modalContainer: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: Color.background_color, 
+    marginTop:30,
+    opacity:0.95
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    backgroundColor: Color.primary_color
+  },
+  topModal:{
+    flexDirection:'row'
+  },
+  searchContent:{
+    margin:10
   }
+ 
 });
 
 export default HomePage;

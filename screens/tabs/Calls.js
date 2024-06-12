@@ -53,7 +53,7 @@ const CallsPage = () => {
   const addUserToChats = (user)=> {
     if (!(ChatContxt.chats.includes(user))) {
       ChatContxt.addChat(user)
-      navigator.navigate('thread', {username:user.user})
+      navigator.navigate('thread', {link:user.link})
     }
     
   }
