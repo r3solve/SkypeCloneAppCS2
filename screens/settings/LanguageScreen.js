@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import Color from '../../constants/Color';
 
 const LanguageScreen = () => {
     return (
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f8f8f8',
+        backgroundColor: Color.background_color,
     },
     title: {
         fontSize: 24,

@@ -46,7 +46,7 @@ function HomePage() {
           <View style={styles.modalContent}>
             <View style={styles.topModal}>
               <Searchbar
-                style={{ height: 50, width: '80%', fontSize: 12, backgroundColor: '#e4ebf1', marginRight: 15 }}
+                style={{ height: 50, width: '80%', fontSize: 12, backgroundColor: '#e2eef8', marginRight: 15 }}
                 placeholder="Contacts"
                 value={searchQuery}
                 placeholderTextColor={'gray'}

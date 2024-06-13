@@ -67,10 +67,7 @@ export default function App() {
             <Stack.Screen name='thread' options={({ route, navigation }) => {
                 return {
                   headerBackTitle:false,
-                    headerRight: () => (<View>
-                      <Text>{route.params.username}</Text>
-                    </View>),
-                    headerLeft: () => (<HeaderBack username={route.params.id} onPress={()=> navigation.navigate('home')} imageUrl="./assets/logo.png" ></HeaderBack> ),
+                    headerLeft: () => (<HeaderBack username={route.params.username} onPress={()=> navigation.navigate('home')} imageUrl="./assets/logo.png" ></HeaderBack> ),
                 };
             }} component={ChatDetailsPage}></Stack.Screen>
 

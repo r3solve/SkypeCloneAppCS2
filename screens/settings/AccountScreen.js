@@ -1,11 +1,37 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import Color from '../../constants/Color';
+
+const settingsData = [
+    { id: '1', title: 'Change Email' },
+    { id: '2', title: 'Change Phone Number' },
+    { id: '3', title: 'Change Password' },
+    { id: '4', title: 'Manage Socials' },
+];
 
 const AccountScreen = () => {
+    const handlePress = (setting) => {
+        // Implement navigation or actions based on the setting pressed
+        console.log(`Setting pressed: ${setting}`);
+    };
+
+    const renderSettingItem = ({ item }) => (
+        <TouchableOpacity
+            style={styles.settingButton}
+            onPress={() => handlePress(item.title)}
+        >
+            <Text style={styles.settingText}>{item.title}</Text>
+        </TouchableOpacity>
+    );
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Account</Text>
-            <Text style={styles.content}>This is the Account screen.</Text>
+            <FlatList
+                data={settingsData}
+                renderItem={renderSettingItem}
+                keyExtractor={item => item.id}
+                style={styles.flatList}
+            />
         </View>
     );
 }
@@ -13,17 +39,21 @@ const AccountScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f8f8f8',
+        backgroundColor: Color.background_color,
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
+    flatList: {
+        width: '100%',
     },
-    content: {
+    settingButton: {
+        backgroundColor:Color.background_color,
+        padding:20,
+        borderBottomColor:'#bebdbd',
+        borderBottomWidth:1
+    },
+    settingText: {
+        color: '#4d4e4e',
         fontSize: 16,
-        marginTop: 10,
+        fontWeight: 'bold',
     },
 });
 

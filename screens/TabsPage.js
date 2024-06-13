@@ -5,7 +5,7 @@ import UsersPage from './tabs/HomePage'
 import SettingsPage from './tabs/SettingsPage';
 import { Ionicons } from '@expo/vector-icons';
 import Color from '../constants/Color';
-import CallsPage from './tabs/Calls';
+import CallsPage from './tabs/ExplorePage';
 const Tabs = createBottomTabNavigator()
 
 const HomePage = () => {

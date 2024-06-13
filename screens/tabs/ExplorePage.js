@@ -77,7 +77,7 @@ const CallsPage = () => {
   return (
     <View style={styles.container}>
       <Searchbar
-        style={{ height: 50, width: 'auto', fontSize: 12, backgroundColor: '#e4ebf1' }}
+        style={{ height: 50, width: 'auto', fontSize: 12, backgroundColor: '#e2eef8' }}
         placeholder="@username"
         onChangeText={handleFilter}
         value={searchQuery}
