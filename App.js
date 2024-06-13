@@ -23,6 +23,7 @@ import NotificationsScreen from './screens/settings/NotificationsScreen'; // Imp
 import ChatsScreen from './screens/settings/ChatsScreen'; // Import ChatsScreen
 import LanguageScreen from './screens/settings/LanguageScreen';
 import { ChatStoreContextProvider } from './store/chatstore-context';
+import { CurrentUserProvider } from './store/loggedInUserStore';
 
 import HeaderBack from './components/HeaderBack';
 import { MessageProvider } from './store/messageStore';
@@ -32,6 +33,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
     <SafeAreaView style={styles.appContainer}>
+      <CurrentUserProvider>
       <MessageProvider>
       <ChatStoreContextProvider>
       <NavigationContainer>
@@ -76,6 +78,7 @@ export default function App() {
       </NavigationContainer>
       </ChatStoreContextProvider>
       </MessageProvider>
+      </CurrentUserProvider>
     </SafeAreaView>
     </SafeAreaProvider>
   )

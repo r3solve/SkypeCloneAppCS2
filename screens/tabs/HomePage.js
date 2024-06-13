@@ -7,14 +7,15 @@ import { Ionicons } from "@expo/vector-icons";
 import AccountBar from "../../components/AccountBar";
 import { MessageContext } from "../../store/messageStore";
 import { useNavigation, useRoute } from "@react-navigation/native";
-
+import { CurrentUserContext } from "../../store/loggedInUserStore";
 function HomePage() {
   const [isModalVisible, setModalVisible] = useState(false);
   const { allChats } = useContext(MessageContext);
-  const loggedInUser = 'john55';
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const navigation = useNavigation();
+  const userContext = useContext(CurrentUserContext)
+  const loggedInUser = useContext.activeUser
 
   useEffect(() => {
     // Prevent going back to login page after signing in
@@ -27,7 +28,7 @@ function HomePage() {
   }, []);
 
   useEffect(() => {
-    setFilteredData(allChats.filter(chat => chat.createdBy === loggedInUser || chat.receiver === loggedInUser));
+    setFilteredData(allChats.filter(chat => chat.createdBy === loggedInUser?.username || chat.receiver === loggedInUser?.username));
   }, [allChats]);
 
   const toggleModal = () => {
@@ -47,7 +48,11 @@ function HomePage() {
       <FlatList
         data={filteredData}
         renderItem={({ item }) => (
-          <ChatComponent onPress={() => navigation.navigate('thread', { id: item.id, user: item })} user={item.receiver} message={item.chats[0].content} />
+          <ChatComponent 
+            onPress={() => navigation.navigate('thread', { id: item.id, username:item.username })} 
+            user={item.receiver} 
+            message={item.chats[item.chats.length]?.content} 
+          />
         )}
         keyExtractor={item => item.id.toString()}
       />

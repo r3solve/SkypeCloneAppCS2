@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Text, View, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 import Color from "../constants/Color";
 import CustomButton from "../components/CustomButton";
+import { CurrentUserContext } from "../store/loggedInUserStore";
 
 const DATA = [
     { id: 1, bio: "Coffee addict ☕, code lover 💻", user: 'Jane Doe', username: 'janed', email: 'jane.doe@example.com', dateOfBirth: '1990-05-14', password: 'password1' },
@@ -32,6 +33,7 @@ const DATA = [
     const navigation = useNavigation();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const userContext = useContext(CurrentUserContext)
 
     const handleSignIn = () => {
         // Find user in DATA array based on username (email) and password
@@ -39,8 +41,8 @@ const DATA = [
 
         if (user) {
             // Navigate to the home screen on successful login
+            userContext.setActiveUser(user)
             navigation.navigate('home');
-            // Clear username and password fields
             setUsername('');
             setPassword('');
         } else {

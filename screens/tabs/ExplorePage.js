@@ -7,6 +7,7 @@ import AccountBar from '../../components/AccountBar';
 import { useNavigation } from '@react-navigation/native';
 import { ChatStoreContext } from '../../store/chatstore-context';
 import { MessageContext, MessageProvider } from '../../store/messageStore';
+import { CurrentUserContext } from '../../store/loggedInUserStore';
 
 const DATA = [
   { id: 1, bio: "Coffee addict ☕, code lover 💻", user: 'Jane Doe', username: 'janed', email: 'jane.doe@example.com', dateOfBirth: '1990-05-14' },
@@ -35,6 +36,8 @@ const CallsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const { addChat, allChats } = useContext(MessageContext);
+  const userContext = useContext(CurrentUserContext)
+  const loggedInUser = useContext.activeUser
   const navigation = useNavigation();
 
   const handleFilter = (text) => {
@@ -58,13 +61,13 @@ const CallsPage = () => {
       // Create a new chat and navigate to its thread
       const newChat = {
         id: allChats.length + 1,
-        createdBy: 'john55',
+        createdBy: loggedInUser?.username,
         receiver: user.username,
         link: `cloud/${Date.now()}`,
-        chats: [{ sender: 'john55', content: 'New chat started' }],
+        chats: [{ sender: 'cloudChat', content: 'New chat started' }],
       };
       addChat(newChat);
-      navigation.navigate('thread', {id:newChat.id});
+      navigation.navigate('thread', {id:newChat.id, username:newChat.receiver});
     }
   };
 

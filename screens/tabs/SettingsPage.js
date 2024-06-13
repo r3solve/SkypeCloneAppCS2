@@ -5,10 +5,14 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { Divider, Avatar } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Color from '../../constants/Color';
+import { useContext } from 'react';
+import { CurrentUserContext } from '../../store/loggedInUserStore';
 
 function SettingsPage({route}) {
     const navigation = useNavigation();
     const [avatarUrl, setAvatarUrl] = useState("https://uifaces.co/our-content/donated/6MWH9Xi_.jpg")
+    const userContext = useContext(CurrentUserContext)
+    const loggedInUser = userContext.activeUser
 
 
     const settingsOptions = [
@@ -27,8 +31,8 @@ function SettingsPage({route}) {
                 <TouchableOpacity>
                     <Avatar.Image size={100} source={{uri: avatarUrl }} ></Avatar.Image>
                 </TouchableOpacity>
-                <Text style={styles.headerText}>Your Name</Text>
-                <Text style={styles.headerSubText}>Status message goes here</Text>
+                <Text style={styles.headerText}>{ loggedInUser?.username}</Text>
+                <Text style={styles.headerSubText}>{ loggedInUser?.bio}</Text>
             </View>
 
             <Divider />

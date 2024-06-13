@@ -6,12 +6,15 @@ import { Button, FlatList, Text, TextInput, View, StyleSheet, ScrollView, Platfo
 import { Ionicons } from '@expo/vector-icons';
 import Color from '../constants/Color';
 import { MessageContext } from '../store/messageStore';
+import { CurrentUserContext } from '../store/loggedInUserStore'
 
 function ChatDetailsPage() {
   const navigation = useNavigation();
   const { addMessage, allChats } = useContext(MessageContext);
   const route = useRoute();
   const { id } = route.params; // Destructure id from route params
+  const userContext = useContext(CurrentUserContext)
+  const loggedInUser = useContext.activeUser
 
   const [messages, setMessages] = useState([]);
 
@@ -27,7 +30,7 @@ function ChatDetailsPage() {
 
   const sendMessage = () => {
     if (newMessage.trim() !== '') {
-      const message = { id: `${messages.length + 1}`, text: newMessage, sender: 'me' };
+      const message = { id: `${messages.length + 1}`, text: newMessage, sender: loggedInUser?.username };
       addMessage(id, message); // Add message to context
       setMessages([...messages, message]); // Update local state
       setNewMessage('');
@@ -41,7 +44,7 @@ function ChatDetailsPage() {
         data={messages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={[styles.messageContainer, item.sender === 'me' ? styles.myMessage : styles.otherMessage]}>
+          <View style={[styles.messageContainer, item.sender === loggedInUser?.username ? styles.myMessage : styles.otherMessage]}>
             <Text style={styles.messageText}>{item.text}</Text>
           </View>
         )}
