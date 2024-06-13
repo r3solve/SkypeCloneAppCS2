@@ -1,6 +1,6 @@
-import { Button, FlatList, StyleSheet, Text, View, Modal, ScrollView } from "react-native";
+import React, { useEffect, useContext, useState } from "react";
+import { Button, FlatList, StyleSheet, Text, View, Modal, ScrollView, BackHandler } from "react-native";
 import ChatComponent from "../../components/chatComponent";
-import { useEffect, useContext, useState } from "react";
 import { Searchbar, FAB } from 'react-native-paper';
 import Color from "../../constants/Color";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,6 +15,16 @@ function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    // Prevent going back to login page after signing in
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      return true;
+    });
+
+    // Clean up the listener when component unmounts
+    return () => backHandler.remove();
+  }, []);
 
   useEffect(() => {
     setFilteredData(allChats.filter(chat => chat.createdBy === loggedInUser || chat.receiver === loggedInUser));
@@ -64,10 +74,18 @@ function HomePage() {
         </View>
       </Modal>
       <FAB
+        icon="circle"
+        style={styles.fab2}
+        onPress={{}}
+        color={Color.background_color}
+        size="10"
+      />
+      <FAB
         icon="plus"
         style={styles.fab}
         onPress={toggleModal}
         color={Color.background_color}
+      
       />
     </View>
   );
@@ -99,6 +117,13 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
+    backgroundColor: Color.primary_color,
+  },
+  fab2: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 80,
     backgroundColor: Color.primary_color,
   },
   topModal: {

@@ -42,7 +42,7 @@ function SettingsPage({route}) {
 
             <Divider />
 
-            <TouchableOpacity onPress={() => {}} style={styles.optionContainer}>
+            <TouchableOpacity onPress={() => {navigation.navigate('login')}} style={styles.optionContainer}>
                 <Ionicons name="log-out" size={24} color="#e77f7c" />
                 <Text style={styles.optionText}>Log out</Text>
             </TouchableOpacity>

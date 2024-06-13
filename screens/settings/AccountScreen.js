@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     settingText: {
         color: '#4d4e4e',
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: 'normal',
     },
 });
 
