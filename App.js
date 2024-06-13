@@ -53,7 +53,7 @@ export default function App() {
             },
             title: ''
           }}>
-            <Stack.Screen name='help'  component={HelpScreen}></Stack.Screen>
+            <Stack.Screen name='help'   component={HelpScreen}></Stack.Screen>
             <Stack.Screen name='about'  component={AboutScreen}></Stack.Screen>
             <Stack.Screen name='account'  component={AccountScreen}></Stack.Screen>
             <Stack.Screen name='privacy'  component={PrivacyScreen}></Stack.Screen>

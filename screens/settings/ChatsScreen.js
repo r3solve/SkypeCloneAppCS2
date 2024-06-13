@@ -22,6 +22,7 @@ const ChatsScreen = () => {
                 });
                 if (data.length > 0) {
                     setContacts(data);
+                    console.log(data)
                 }
             } catch (error) {
                 console.error(error);

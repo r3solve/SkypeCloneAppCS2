@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ChatStoreContext } from '../../store/chatstore-context';
 import { MessageContext, MessageProvider } from '../../store/messageStore';
 import { CurrentUserContext } from '../../store/loggedInUserStore';
+import pushChat from '../../helpers/http';
 
 const DATA = [
   { id: 1, bio: "Coffee addict ☕, code lover 💻", user: 'Jane Doe', username: 'janed', email: 'jane.doe@example.com', dateOfBirth: '1990-05-14' },
