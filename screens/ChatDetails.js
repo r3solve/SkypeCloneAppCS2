@@ -9,7 +9,6 @@ import { ChatStoreContext } from '../store/chatstore-context';
 function ChatDetailsPage() {
     const navigation = useNavigation();
     const ChatContxt = useContext(ChatStoreContext)
-    const activeChatUser = ChatContxt.currentActiveUser
     const route = useRoute();
     const { id } = route.params; // Destructure id from route params
 
@@ -29,7 +28,6 @@ function ChatDetailsPage() {
                 { id: (messages.length + 1).toString(), text: newMessage, sender: 'me' },
             ]);
             setNewMessage('');
-            Alert.alert("Active User", route.params.username)
         }
     };
 

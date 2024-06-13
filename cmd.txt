@@ -1,2 +1,0 @@
-npx expo start --offline
-

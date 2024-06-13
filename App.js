@@ -25,12 +25,14 @@ import LanguageScreen from './screens/settings/LanguageScreen';
 import { ChatStoreContextProvider } from './store/chatstore-context';
 
 import HeaderBack from './components/HeaderBack';
+import { MessageProvider } from './store/messageStore';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
   return (
     <SafeAreaProvider>
     <SafeAreaView style={styles.appContainer}>
+      <MessageProvider>
       <ChatStoreContextProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='get-started'>
@@ -68,7 +70,7 @@ export default function App() {
                     headerRight: () => (<View>
                       <Text>{route.params.username}</Text>
                     </View>),
-                    headerLeft: () => (<HeaderBack username={route.params.username.slice(0,11)} onPress={()=> navigation.navigate('home')} imageUrl="./assets/logo.png" ></HeaderBack> ),
+                    headerLeft: () => (<HeaderBack username={route.params.id} onPress={()=> navigation.navigate('home')} imageUrl="./assets/logo.png" ></HeaderBack> ),
                 };
             }} component={ChatDetailsPage}></Stack.Screen>
 
@@ -76,6 +78,7 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
       </ChatStoreContextProvider>
+      </MessageProvider>
     </SafeAreaView>
     </SafeAreaProvider>
   )
