@@ -6,7 +6,7 @@ import { Alert, View, Text, FlatList, StyleSheet } from 'react-native';
 import AccountBar from '../../components/AccountBar';
 import { useNavigation } from '@react-navigation/native';
 import { ChatStoreContext } from '../../store/chatstore-context';
-import { MessageContext } from '../../store/messageStore';
+import { MessageContext, MessageProvider } from '../../store/messageStore';
 
 const DATA = [
   { id: 1, bio: "Coffee addict ☕, code lover 💻", user: 'Jane Doe', username: 'janed', email: 'jane.doe@example.com', dateOfBirth: '1990-05-14' },
@@ -31,20 +31,16 @@ const DATA = [
   { id: 20, bio: "Wanderlust ✈️, night owl 🌙", user: 'Rachel Green', username: 'rachelg', email: 'rachel.green@example.com', dateOfBirth: '1984-12-01' }
 ];
 
-const loggedInUser = 'janedoe55';
-
 const CallsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
-
-  const ChatContxt = useContext(ChatStoreContext);
-  const ChatContext = useContext(MessageContext);
-  const navigator = useNavigation();
+  const { addChat, allChats } = useContext(MessageContext);
+  const navigation = useNavigation();
 
   const handleFilter = (text) => {
     setSearchQuery(text);
     if (text.length > 0) {
-      let filteredData = DATA.filter(item => item.user.toLowerCase().includes(text.toLowerCase()));
+      const filteredData = DATA.filter((item) => item.user.toLowerCase().includes(text.toLowerCase()));
       setResults(filteredData);
     } else {
       setResults([]);
@@ -52,48 +48,47 @@ const CallsPage = () => {
   };
 
   const addUserToChats = (user) => {
-    const existingChat = ChatContext.allChats.find(chat => chat.createdBy === user.username);
-    if (!existingChat) {
-      ChatContext.addChat({
-        id: ChatContext.allChats.length + 1,
-        createdBy: user.username,
-        receiver: loggedInUser,
-        link: `cloud/${ChatContext.allChats.length + 1}`,
-        chats: null
-      });
-      console.log('Added');
+    // Check if there's an existing chat with the same receiver
+    const existingChat = allChats.find(chat => chat.receiver === user.username);
+  
+    if (existingChat) {
+      // Navigate to the existing chat thread
+      navigation.navigate('thread', existingChat.id);
     } else {
-      navigator.navigate('thread', { id: existingChat.id, user: user });
-      console.log('Skipped');
+      // Create a new chat and navigate to its thread
+      const newChat = {
+        id: allChats.length + 1,
+        createdBy: 'john55',
+        receiver: user.username,
+        link: `cloud/${Date.now()}`,
+        chats: [{ sender: 'john55', content: 'New chat started' }],
+      };
+      addChat(newChat);
+      navigation.navigate('thread', {id:newChat.id});
     }
-    console.log(ChatContext.allChats)
   };
 
-  const renderItem = ({ item }) => {
-    return <AccountBar user={'@' + item.username} onPress={() => addUserToChats(item)}>{item.bio}</AccountBar>;
-  };
+  const renderItem = ({ item }) => (
+    <AccountBar onPress={() => addUserToChats(item)} user={'@' + item.username}>
+      {item.bio}
+    </AccountBar>
+  );
 
   return (
     <View style={styles.container}>
       <Searchbar
         style={{ height: 50, width: 'auto', fontSize: 12, backgroundColor: '#e4ebf1' }}
         placeholder="@username"
-        onChangeText={(text) => handleFilter(text)}
+        onChangeText={handleFilter}
         value={searchQuery}
-        onClearIconPress={() => setSearchQuery('')}
-        placeholderTextColor={"grey"}
+        placeholderTextColor="grey"
       />
-      { 
-      searchQuery.length === 0 && (
+      {searchQuery.length === 0 && (
         <View style={styles.noContentTextContainer}>
           <Text style={styles.noContentText}>Search for User</Text>
         </View>
       )}
-      <FlatList
-        data={results}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
-      />
+      <FlatList data={results} renderItem={renderItem} keyExtractor={(item) => item.id.toString()} />
     </View>
   );
 };
@@ -101,20 +96,21 @@ const CallsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.background_color
+    backgroundColor: Color.background_color,
   },
   noContentTextContainer: {
     flex: 1,
     padding: 10,
     alignContent: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   noContentText: {
     fontSize: 20,
-    fontWeight: '300',
+    fontWeight: 'light',
     textAlign: 'center',
-    color: '#c5c1c1'
-  }
+    color: '#c5c1c1',
+  },
 });
+
 
 export default CallsPage;
