@@ -4,7 +4,8 @@ import { Button, Text, View, TextInput, TouchableOpacity, StyleSheet, Image } fr
 import Color from "../constants/Color";
 import CustomButton from "../components/CustomButton";
 import { CurrentUserContext } from "../store/loggedInUserStore";
-
+import { loginUser } from "../helpers/http";
+import { getUser } from "../helpers/firbase";
 const DATA = [
     { id: 1, bio: "Coffee addict ☕, code lover 💻", user: 'Jane Doe', username: 'janed', email: 'jane.doe@example.com', dateOfBirth: '1990-05-14', password: 'password1' },
     { id: 2, bio: "Tech geek 🤓, always exploring 🚀", user: 'Thomas Hanks', username: 'thomash', email: 'thomas.hanks@example.com', dateOfBirth: '1985-03-22', password: 'password2' },
@@ -31,25 +32,23 @@ const DATA = [
 
   function SignInPage() {
     const navigation = useNavigation();
-    const [username, setUsername] = useState('');
+    const [email, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const userContext = useContext(CurrentUserContext)
+    const {activeUser, setActiveUser} = useContext(CurrentUserContext)
 
     const handleSignIn = () => {
-        // Find user in DATA array based on username (email) and password
-        const user = DATA.find(user => user.username === username && user.password === password);
-
-        if (user) {
-            // Navigate to the home screen on successful login
-            userContext.setActiveUser(user)
-            navigation.navigate('home');
-            setUsername('');
-            setPassword('');
-        } else {
-            // Display an error message or handle unsuccessful login
-            alert('Invalid username or password. Please try again.');
-        }
-    };
+        loginUser(email, password)
+          .then((user) => {
+            // Assuming setActiveUser expects a user object
+            setActiveUser(email)
+            navigation.navigate('home'); 
+          })
+          .catch((error) => {
+            // Optionally, display the error message in the UI
+            alert('Login failed: ' + error.code);
+          });
+      };
 
     return (
         <View style={styles.container}>
@@ -58,7 +57,7 @@ const DATA = [
             <TextInput
                 style={styles.input}
                 placeholder="Username"
-                value={username}
+                value={email}
                 onChangeText={setUsername}
                 autoCapitalize="none"
             />

@@ -1,25 +1,13 @@
 export default class {
-    constructor(id, creator, reciever, chats) {
-        this.id = id 
-        this.creator = creator
-        this.reciever = reciever
-        this.chats = chats
-    }
-
-    setCreator(name) {
-        this.creator = name
-    }
-    
-    setReciver(name){
-        this.reciever = name
-    }
-    setLink(){
-        this.link = `cloud/chat/${this.id}`
+    constructor(email, username, bio, phoneNumber) {
+        this.email = email
+        this.username = username
+        this.bio = bio 
+        this.phoneNumber = phoneNumber
     }
 
 
     createUser() {
-        this.setLink()
-        return {id: this.id, createdBy:this.creator, reciever:this.reciever,link:this.link, chats:[]}
+        return {username:this.username, email : this.email, bio : this.bio, number : this.phoneNumber}
     }
 }

@@ -8,14 +8,18 @@ import AccountBar from "../../components/AccountBar";
 import { MessageContext } from "../../store/messageStore";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { CurrentUserContext } from "../../store/loggedInUserStore";
+import { getUser } from "../../helpers/firbase";
+
 function HomePage() {
   const [isModalVisible, setModalVisible] = useState(false);
   const { allChats } = useContext(MessageContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const navigation = useNavigation();
-  const userContext = useContext(CurrentUserContext)
+  const {activeUser, activeUserObject, setActiveUserObject} = useContext(CurrentUserContext)
   const loggedInUser = useContext.activeUser
+  
+
 
   useEffect(() => {
     // Prevent going back to login page after signing in
@@ -34,8 +38,10 @@ function HomePage() {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+  setActiveUserObject(getUser(activeUser))
 
   return (
+
     <View style={styles.mainContainer}>
       <View style={styles.searchContainer}>
         <Searchbar
@@ -81,7 +87,7 @@ function HomePage() {
       <FAB
         icon="circle"
         style={styles.fab2}
-        onPress={{}}
+        onPress={()=> console.log(activeUserObject)}
         color={Color.background_color}
         size="10"
       />

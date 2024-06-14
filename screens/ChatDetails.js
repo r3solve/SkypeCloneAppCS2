@@ -8,6 +8,7 @@ import Color from '../constants/Color';
 import { MessageContext } from '../store/messageStore';
 import { CurrentUserContext } from '../store/loggedInUserStore'
 
+
 function ChatDetailsPage() {
   const navigation = useNavigation();
   const { addMessage, allChats } = useContext(MessageContext);

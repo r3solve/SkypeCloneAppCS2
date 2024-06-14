@@ -4,20 +4,28 @@ import { useState } from "react";
 const CurrentUserContext = createContext({});
 
 function CurrentUserProvider({ children }) {
-    const [activeUser, updateActiveUser] = useState({});
+    const [activeUser, updateActiveUser] = useState('');
+    const [activeUserObject, updateActiveUserObject] = useState({})
 
     function setActiveUser(user) {
         updateActiveUser(user);
     }
+    function setActiveUserObject(user) {
+        updateActiveUser(user);
+    }
 
     function removeActiveUser() {
+        updateActiveUser('');
+    }
+    function removeActiveUserObject() {
         updateActiveUser({});
     }
 
     const values = {
         activeUser: activeUser,
         setActiveUser: setActiveUser,
-        removeActiveUser: removeActiveUser
+        removeActiveUser: removeActiveUser,
+        setActiveUserObject: setActiveUserObject
     };
 
     return (

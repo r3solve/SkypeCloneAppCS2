@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ChatStoreContext } from '../../store/chatstore-context';
 import { MessageContext, MessageProvider } from '../../store/messageStore';
 import { CurrentUserContext } from '../../store/loggedInUserStore';
-import pushChat from '../../helpers/http';
+import {pushChat} from '../../helpers/http';
 
 const DATA = [
   { id: 1, bio: "Coffee addict ☕, code lover 💻", user: 'Jane Doe', username: 'janed', email: 'jane.doe@example.com', dateOfBirth: '1990-05-14' },
@@ -37,9 +37,9 @@ const CallsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const { addChat, allChats } = useContext(MessageContext);
-  const userContext = useContext(CurrentUserContext)
-  const loggedInUser = useContext.activeUser
+  const {loggedInUser} = useContext(CurrentUserContext)
   const navigation = useNavigation();
+  const { activeUser } = useContext(CurrentUserContext); // Destructure activeUser directly
 
   const handleFilter = (text) => {
     setSearchQuery(text);
@@ -52,25 +52,25 @@ const CallsPage = () => {
   };
 
   const addUserToChats = (user) => {
-    // Check if there's an existing chat with the same receiver
+
     const existingChat = allChats.find(chat => chat.receiver === user.username);
   
     if (existingChat) {
-      // Navigate to the existing chat thread
-      navigation.navigate('thread', existingChat.id);
+        navigation.navigate('thread', existingChat.id);
     } else {
-      // Create a new chat and navigate to its thread
-      const newChat = {
-        id: allChats.length + 1,
-        createdBy: loggedInUser?.username,
-        receiver: user.username,
-        link: `cloud/${Date.now()}`,
-        chats: [{ sender: 'cloudChat', content: 'New chat started' }],
-      };
-      addChat(newChat);
-      navigation.navigate('thread', {id:newChat.id, username:newChat.receiver});
+        // Create a new chat and navigate to its thread
+        const newChat = {
+            id: allChats.length + 1,
+            createdBy: activeUser.username, // Access activeUser directly here
+            receiver: user.username,
+            link: `cloud/${Date.now()}`,
+            chats: [{ sender: 'cloudChat', content: 'New chat started' }],
+        };
+        addChat(newChat);
+        pushChat(newChat.id, newChat.createdBy, newChat.receiver, newChat.link, newChat.chats);
+        navigation.navigate('thread', { id: newChat.id, username: newChat.receiver });
     }
-  };
+};
 
   const renderItem = ({ item }) => (
     <AccountBar onPress={() => addUserToChats(item)} user={'@' + item.username}>

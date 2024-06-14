@@ -1,19 +1,32 @@
 import React from 'react';
 import { useState } from 'react';
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Divider, Avatar } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Color from '../../constants/Color';
 import { useContext } from 'react';
 import { CurrentUserContext } from '../../store/loggedInUserStore';
-
+import { logOutUser } from '../../helpers/http';
 function SettingsPage({route}) {
     const navigation = useNavigation();
     const [avatarUrl, setAvatarUrl] = useState("https://uifaces.co/our-content/donated/6MWH9Xi_.jpg")
     const userContext = useContext(CurrentUserContext)
     const loggedInUser = userContext.activeUser
+    const {activeUser, setActiveUser} = useContext(CurrentUserContext)
 
+
+    const handleLogOut = () =>{
+        loggedOut = logOutUser()
+        if (logOutUser){
+            if (activeUser){
+                Alert.alert("Info", "Logging Out", [{text:'Okay', onPress:()=> (navigation.navigate('login'))}])
+            }
+            setActiveUser(null)
+
+            
+        }
+    }
 
     const settingsOptions = [
         { icon: 'person', title: 'Account', onPress: () => {navigation.navigate('account')} },
@@ -46,7 +59,7 @@ function SettingsPage({route}) {
 
             <Divider />
 
-            <TouchableOpacity onPress={() => {navigation.navigate('login')}} style={styles.optionContainer}>
+            <TouchableOpacity onPress={handleLogOut} style={styles.optionContainer}>
                 <Ionicons name="log-out" size={24} color="#e77f7c" />
                 <Text style={styles.optionText}>Log out</Text>
             </TouchableOpacity>
