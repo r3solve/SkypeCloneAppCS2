@@ -6,7 +6,7 @@ import Color from '../constants/Color';
 import { MessageContext } from '../store/messageStore';
 import { CurrentUserContext } from '../store/loggedInUserStore'
 import { updateMessages, db, fetchChats } from '../helpers/firebase';
-import { onSnapshot, doc } from "firebase/firestore";
+import { doc,collection, onSnapshot } from "firebase/firestore";
 
 function ChatDetailsPage() {
   const navigation = useNavigation();
