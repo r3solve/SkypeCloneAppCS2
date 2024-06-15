@@ -1,10 +1,5 @@
 import { createContext, useState } from "react";
 
-let DATA = [
-
-   
-  ];
-  
 
 const ChatStoreContext = createContext({
     chats: [],
@@ -41,14 +36,15 @@ function ChatStoreContextProvider({ children }) {
         removeChat: removeChat,
         currentUser: currentUser,
         setCurrentUser: setCurrentUser,
-        removeCurrentUser: removeCurrentUser
+        removeCurrentUser: removeCurrentUser,
+        
     };
 
     return (
-        <ChatStoreContext.Provider value={values, DATA}>
+        <ChatStoreContext.Provider value={values}>
             {children}
         </ChatStoreContext.Provider>
     );
 }
 
-export { ChatStoreContext, ChatStoreContextProvider, DATA };
+export { ChatStoreContext, ChatStoreContextProvider };

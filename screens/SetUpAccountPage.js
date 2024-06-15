@@ -55,7 +55,7 @@ export default function SetUpAccountPage({ navigation }) {
             </TouchableOpacity>
         </View>
         <View style={styles.form}>
-            <TextInput autoCapitalize={false} onChangeText={(text)=>setUsername(text)} style={styles.input} placeholder='@Username' ></TextInput>
+            <TextInput autoCapitalize={false}  autoComplete={false} onChangeText={(text)=>setUsername(text)} style={styles.input} placeholder='@Username' ></TextInput>
             <PhoneInput onChangeText={(text)=> setValue(text)}  
                 onChangeFormattedText={(text) => {
                 setPhoneNumber(text);

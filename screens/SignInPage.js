@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { act, useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Text, View, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 import Color from "../constants/Color";
 import CustomButton from "../components/CustomButton";
 import { CurrentUserContext } from "../store/loggedInUserStore";
 import { loginUser } from "../helpers/http";
-import { getUser } from "../helpers/firbase";
+import { getUser } from "../helpers/firebase";
 const DATA = [
     { id: 1, bio: "Coffee addict ☕, code lover 💻", user: 'Jane Doe', username: 'janed', email: 'jane.doe@example.com', dateOfBirth: '1990-05-14', password: 'password1' },
     { id: 2, bio: "Tech geek 🤓, always exploring 🚀", user: 'Thomas Hanks', username: 'thomash', email: 'thomas.hanks@example.com', dateOfBirth: '1985-03-22', password: 'password2' },
@@ -42,6 +42,7 @@ const DATA = [
           .then((user) => {
             // Assuming setActiveUser expects a user object
             setActiveUser(email)
+            console.log(activeUser)
             navigation.navigate('home'); 
           })
           .catch((error) => {

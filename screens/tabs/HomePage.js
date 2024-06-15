@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { Button, FlatList, StyleSheet, Text, View, Modal, ScrollView, BackHandler } from "react-native";
+import { Button, FlatList, StyleSheet, Text, View, Modal, ScrollView, BackHandler, ActivityIndicator } from "react-native";
 import ChatComponent from "../../components/chatComponent";
 import { Searchbar, FAB } from 'react-native-paper';
 import Color from "../../constants/Color";
@@ -8,18 +8,39 @@ import AccountBar from "../../components/AccountBar";
 import { MessageContext } from "../../store/messageStore";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { CurrentUserContext } from "../../store/loggedInUserStore";
-import { getUser } from "../../helpers/firbase";
+import { getAllUserChats1, getAllUsers, getUser,getCreatorsOrReceivers } from "../../helpers/firebase";
+import useMessageStore from "../../store/FibaseMessages";
 
 function HomePage() {
   const [isModalVisible, setModalVisible] = useState(false);
-  const { allChats } = useContext(MessageContext);
+  const { allChats, setChats } = useContext(MessageContext);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState([]);
   const navigation = useNavigation();
-  const {activeUser, activeUserObject, setActiveUserObject} = useContext(CurrentUserContext)
-  const loggedInUser = useContext.activeUser
-  
+  const { activeUser, activeUserObject, setAllUsers, allUsers } = useContext(CurrentUserContext);
+  const loggedInUser = activeUser;
+  const [isLoading, setIsLoading] = useState(false);
+  const { allMessagesByUser, setMessages } = useMessageStore();
+  const[fetchChats, setFetchChats] = useState([])
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getAllUsers();
+        const chatData = await getCreatorsOrReceivers(activeUser);
+        setAllUsers(data);
+        setMessages(chatData)
+        setFetchChats(chatData)
+        console.log(chatData)
+        console.log(allMessagesByUser)
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        setIsLoading(false);
+      }
+    };
+    fetchUsers();
+  }, [setAllUsers, allChats]);
 
   useEffect(() => {
     // Prevent going back to login page after signing in
@@ -31,17 +52,21 @@ function HomePage() {
     return () => backHandler.remove();
   }, []);
 
-  useEffect(() => {
-    setFilteredData(allChats.filter(chat => chat.createdBy === loggedInUser?.username || chat.receiver === loggedInUser?.username));
-  }, [allChats]);
-
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-  setActiveUserObject(getUser(activeUser))
+
+  const renderItem = ({ item }) => {
+    return (
+      <ChatComponent
+        onPress={() => navigation.navigate('thread', { username: item.receiver ,id:item.id, chats:item.chats })}
+        user={`${item.createdBy}/${item.receiver}`}
+        message={item.chats.length > 0 ? item.chats[0].content : "No messages yet"}
+      />
+    );
+  };
 
   return (
-
     <View style={styles.mainContainer}>
       <View style={styles.searchContainer}>
         <Searchbar
@@ -51,17 +76,12 @@ function HomePage() {
           value={searchQuery}
         />
       </View>
-      <FlatList
-        data={filteredData}
-        renderItem={({ item }) => (
-          <ChatComponent 
-            onPress={() => navigation.navigate('thread', { id: item.id, username:item.username })} 
-            user={item.receiver} 
-            message={item.chats[item.chats.length]?.content} 
-          />
-        )}
-        keyExtractor={item => item.id.toString()}
-      />
+      {isLoading && <ActivityIndicator size={50} />}
+        <FlatList
+          data={allMessagesByUser}
+          renderItem={renderItem}
+          keyExtractor={item => item.sender}
+        />
       <Modal animationType="slide" transparent={true} visible={isModalVisible} style={{ height: "70%" }}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -87,7 +107,7 @@ function HomePage() {
       <FAB
         icon="circle"
         style={styles.fab2}
-        onPress={()=> console.log(activeUserObject)}
+        onPress={() => console.log(activeUserObject)}
         color={Color.background_color}
         size="10"
       />
@@ -96,7 +116,6 @@ function HomePage() {
         style={styles.fab}
         onPress={toggleModal}
         color={Color.background_color}
-      
       />
     </View>
   );

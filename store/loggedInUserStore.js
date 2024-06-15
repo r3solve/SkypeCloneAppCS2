@@ -1,38 +1,41 @@
-import { createContext } from "react";
-import { useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
+import { getAllUsers } from "../helpers/firebase";
 
 const CurrentUserContext = createContext({});
 
 function CurrentUserProvider({ children }) {
-    const [activeUser, updateActiveUser] = useState('');
-    const [activeUserObject, updateActiveUserObject] = useState({})
+  const [activeUser, updateActiveUser] = useState('');
+  const [activeUserObject, updateActiveUserObject] = useState({});
+  const [all_users, setAllUsers] = useState([]);
 
-    function setActiveUser(user) {
-        updateActiveUser(user);
-    }
-    function setActiveUserObject(user) {
-        updateActiveUser(user);
-    }
+  function setActiveUser(user) {
+    updateActiveUser(user);
+  }
 
-    function removeActiveUser() {
-        updateActiveUser('');
-    }
-    function removeActiveUserObject() {
-        updateActiveUser({});
-    }
+  function removeActiveUser() {
+    updateActiveUser('');
+  }
 
-    const values = {
-        activeUser: activeUser,
-        setActiveUser: setActiveUser,
-        removeActiveUser: removeActiveUser,
-        setActiveUserObject: setActiveUserObject
-    };
+  function removeActiveUserObject() {
+    updateActiveUserObject({});
+  }
 
-    return (
-        <CurrentUserContext.Provider value={values}>
-            {children}
-        </CurrentUserContext.Provider>
-    );
+  const values = {
+    activeUser,
+    setActiveUser,
+    removeActiveUser,
+    activeUserObject,
+    updateActiveUserObject,
+    allUsers: all_users,
+    setAllUsers,
+    
+  };
+
+  return (
+    <CurrentUserContext.Provider value={values}>
+      {children}
+    </CurrentUserContext.Provider>
+  );
 }
 
 export { CurrentUserContext, CurrentUserProvider };

@@ -2,7 +2,8 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set} from "firebase/database";
 import { getFirestore, collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signOut,signInWithEmailAndPassword } from "firebase/auth";
-
+import { useContext } from "react";
+import { MessageContext } from "../store/messageStore";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDG7Ito5r43hysEvCaw3PkcL5DlXUra-X8",
@@ -21,7 +22,7 @@ const auth = getAuth(app)
 
 
 async function pushChat(chatId, createdBy, receiver, link, chats) {
-    const chatRef = doc(db, `chats/${createdBy}/chat/${chatId}`);    
+    const chatRef = doc(db, `chats/${chatId}`);    
     try {
         await setDoc(chatRef, {
             createdBy: createdBy,

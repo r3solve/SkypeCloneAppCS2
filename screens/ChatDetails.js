@@ -1,52 +1,65 @@
-// ChatDetailsPage.js
-
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Button, FlatList, Text, TextInput, View, StyleSheet, ScrollView, Platform, Alert } from "react-native";
+import { Button, FlatList, Text, TextInput, View, StyleSheet, Platform, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import Color from '../constants/Color';
 import { MessageContext } from '../store/messageStore';
 import { CurrentUserContext } from '../store/loggedInUserStore'
-
+import { updateMessages, db, fetchChats } from '../helpers/firebase';
+import { onSnapshot, doc } from "firebase/firestore";
 
 function ChatDetailsPage() {
   const navigation = useNavigation();
   const { addMessage, allChats } = useContext(MessageContext);
   const route = useRoute();
-  const { id } = route.params; // Destructure id from route params
+  const { id, chats, username } = route.params; // Destructure id from route params
   const userContext = useContext(CurrentUserContext)
-  const loggedInUser = useContext.activeUser
-
-  const [messages, setMessages] = useState([]);
-
-  useEffect(() => {
-    // Find the chat by id from allChats in context
-    const chat = allChats.find(chat => chat.id === id);
-    if (chat) {
-      setMessages(chat.chats); // Set messages to the chats array of the found chat
-    }
-  }, [id, allChats]);
-
+  const { activeUser, allUsers, setAllUsers } = userContext; // Destructure activeUser and setAllUsers
+  const [allThreadChats, setThreadChats] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+
+  // useEffect(() => {
+  //   const unsub = onSnapshot(doc(db, "chats", id), (doc) => {
+  //     if (doc.exists()) {
+  //       setThreadChats(doc.data()?.allThreadChats || []);
+  //     }
+  //   });
+
+  //   // Cleanup subscription on unmount
+  //   return () => unsub();
+  // }, [id]);
+
+  useEffect(()=> {
+    setThreadChats(chats)
+   }, [])
 
   const sendMessage = () => {
     if (newMessage.trim() !== '') {
-      const message = { id: `${messages.length + 1}`, text: newMessage, sender: loggedInUser?.username };
+      const message = { id: `${messages.length + 1}`, text: newMessage, sender: activeUser };
       addMessage(id, message); // Add message to context
-      setMessages([...messages, message]); // Update local state
+      setThreadChats((prev) => [...prev, message]); // Update local state
+      updateMessages(id, [...allThreadChats, message]); // Update Firestore
       setNewMessage('');
     }
-    console.log(allChats.find(chat => chat.id === id))
+  };
+
+  const createAMessage = (contentText) => {
+    if (newMessage.trim() !== '') {
+      const message = { id: `${allThreadChats.length + 1}`, sender: activeUser, receiver: username, content: contentText };
+      setThreadChats((prev) => [...prev, message]);
+      updateMessages(id, [...allThreadChats, message]);
+      setNewMessage('');
+    }
   };
 
   return (
     <View behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <FlatList
-        data={messages}
+        data={allThreadChats}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={[styles.messageContainer, item.sender === loggedInUser?.username ? styles.myMessage : styles.otherMessage]}>
-            <Text style={styles.messageText}>{item.text}</Text>
+          <View style={[styles.messageContainer, item.sender === activeUser ? styles.myMessage : styles.otherMessage]}>
+            <Text style={styles.messageText}>{item.content}</Text>
           </View>
         )}
         style={styles.messagesList}
@@ -56,14 +69,14 @@ function ChatDetailsPage() {
           name="camera"
           size={25}
           color={Color.primary_color}
-          onPress={() => Alert.alert('Camera pressed')} // Placeholder for camera functionality
+          onPress={() => Alert.alert('Camera pressed', id)} // Placeholder for camera functionality
           style={styles.sendButton}
         />
         <Ionicons
           name="attach"
           size={25}
           color={Color.primary_color}
-          onPress={() => Alert.alert('Attach pressed')} // Placeholder for attachment functionality
+          onPress={() => Alert.alert('Attach pressed', activeUser)} // Placeholder for attachment functionality
           style={styles.sendButton}
         />
         <TextInput
@@ -76,13 +89,14 @@ function ChatDetailsPage() {
           name="send"
           size={25}
           color={Color.primary_color}
-          onPress={sendMessage}
+          onPress={() => createAMessage(newMessage)}
           style={styles.sendButton}
         />
       </View>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
