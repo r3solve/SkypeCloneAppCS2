@@ -31,8 +31,8 @@ function HomePage() {
         setAllUsers(data);
         setMessages(chatData)
         setFetchChats(chatData)
-        console.log(chatData)
-        console.log(allMessagesByUser)
+        // console.log(chatData)
+        // console.log(allMessagesByUser)
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);

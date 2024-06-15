@@ -57,6 +57,7 @@ const CallsPage = () => {
       const uniqueId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const newChat = {
         id: uniqueId,
+        creaatedAt: new Date().toDateString(),
         createdBy: activeUser,
         receiver: user.email,
         link: `cloud/${Date.now()}`,

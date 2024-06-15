@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Button, FlatList, Text, TextInput, View, StyleSheet, Platform, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
@@ -6,7 +6,7 @@ import Color from '../constants/Color';
 import { MessageContext } from '../store/messageStore';
 import { CurrentUserContext } from '../store/loggedInUserStore'
 import { updateMessages, db, fetchChats } from '../helpers/firebase';
-import { doc,collection, onSnapshot } from "firebase/firestore";
+import { doc,collection, onSnapshot, query } from "firebase/firestore";
 
 function ChatDetailsPage() {
   const navigation = useNavigation();
@@ -29,6 +29,20 @@ function ChatDetailsPage() {
   //   return () => unsub();
   // }, [id]);
 
+  // useLayoutEffect(() => {
+  //   const q = query(collection(db, 'chats', id, 'chats'));
+  //   const unsubscribe = onSnapshot(q, (snapshot) => {
+  //     const fetchedChats = snapshot.docs.map(doc => ({
+  //       id: doc.id(),
+  //       ...doc.data()
+  //     }));
+  //     setThreadChats((prev)=> [...prev,fetchedChats]);
+  //   });
+
+  //   // Cleanup subscription on unmount
+  //   return () => unsubscribe();
+  // }, [allThreadChats]);
+
   useEffect(()=> {
     setThreadChats(chats)
    }, [])
@@ -45,7 +59,7 @@ function ChatDetailsPage() {
 
   const createAMessage = (contentText) => {
     if (newMessage.trim() !== '') {
-      const message = { id: `${allThreadChats.length + 1}`, sender: activeUser, receiver: username, content: contentText };
+      const message = { id: `${allThreadChats.length + 1}`, sender: activeUser, receiver: username, content: contentText, createdAtTime:new Date().toLocaleTimeString(), createdAtDate: new Date().toDateString() };
       setThreadChats((prev) => [...prev, message]);
       updateMessages(id, [...allThreadChats, message]);
       setNewMessage('');
@@ -60,6 +74,7 @@ function ChatDetailsPage() {
         renderItem={({ item }) => (
           <View style={[styles.messageContainer, item.sender === activeUser ? styles.myMessage : styles.otherMessage]}>
             <Text style={styles.messageText}>{item.content}</Text>
+            <Text style={styles.timeText} >{item?.createdAt}</Text>
           </View>
         )}
         style={styles.messagesList}
@@ -119,7 +134,14 @@ const styles = StyleSheet.create({
   },
   messageText: {
     color: 'white',
+  
   },
+  timeText:{
+    color:' white',
+    fontSize: 12,
+
+  }
+  ,
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
