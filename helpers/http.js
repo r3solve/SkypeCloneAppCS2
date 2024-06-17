@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set} from "firebase/database";
-import { getFirestore, collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, setDoc, doc} from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signOut,signInWithEmailAndPassword } from "firebase/auth";
 import { useContext } from "react";
 import { MessageContext } from "../store/messageStore";
@@ -46,15 +46,20 @@ function signUpUser(email, password){
       })
     
 }
-
 async function pushUserInfo(info) {
+  try {
     await setDoc(doc(db, "users", info.email), {
-        username: info.username,
-        email: info.email,
-        phone: info.phoneNumber,
-        bio: info.bio
-      });
-      
+      username: info.username,
+      email: info.email,
+      phone: info.phone, // Ensure this matches your Firestore schema
+      bio: "Hello, I am using cloud chat",
+      profileUrl: info.profileUrl,
+      contactList: []
+    });
+    console.log("User information added successfully");
+  } catch (error) {
+    console.error("Error adding user information: ", error);
+  }
 }
 
 function logOutUser() {

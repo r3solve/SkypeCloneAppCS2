@@ -1,15 +1,16 @@
 import { useState } from 'react'
-import { View,Text, TextInput, StyleSheet} from 'react-native'
-import { Avatar, Icon, Switch, CheckBox } from '@rneui/themed';
+import { View,Text, TextInput, StyleSheet, Alert, ActivityIndicator} from 'react-native'
+import { Avatar,  CheckBox } from '@rneui/themed';
 import { TouchableOpacity } from 'react-native';
-import { Button, RadioButton } from 'react-native-paper';
 import PhoneInput from "react-native-phone-number-input";
-import { pushUserInfo, signUpUser } from '../helpers/http';
 import User from '../models/User';
 import { Ionicons } from '@expo/vector-icons';
 import Color from '../constants/Color';
 import CustomButton from '../components/CustomButton';
-
+import { db, auth } from '../functions/firebase-queries';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { pushUserInfo } from '../helpers/http';
+import useUserCurrentStore from '../state/currentUserStore';
 
 export default function SetUpAccountPage({ navigation }) {
     const [avatarUrl, setAvatarUrl] = useState("https://uifaces.co/our-content/donated/6MWH9Xi_.jpg")
@@ -20,26 +21,31 @@ export default function SetUpAccountPage({ navigation }) {
     const [value, setValue] = useState("");
     const [password, setPassword] = useState('')
     const [formattedValue, setFormattedValue] = useState("");
+    const [isLoading, setLoading] = useState(false)
+    const { setCurrentUser, setCurrentEmail, currentEmail } = useUserCurrentStore()
 
-    const handleCreateAccount = ()=> {
-        const  u1 = new User(email, username, '', phoneNumber)
-        if (!signUpUser(email, password)){
-            x = handleData()
-            if (!x){
-                alert('Account Created Successfully')
-                navigation.navigate('login')
-            }
+    const handleCreateAccount = async () => {
+        if (!username || !email || !phoneNumber || !password) {
+            Alert.alert("Error", "All fields are required.");
+            return;
         }
-    }
 
-    const handleData = ()=> {
-        let res = undefined
-        const  u1 = new User(email, username, '', phoneNumber)
-        pushUserInfo(u1).then((res)=> {  
-        }).catch((err)=> {
-            res =err.code
-        })
-    }
+        try {
+            setLoading(true)
+            let  u1 = {username:username, email:email, phone: phoneNumber, profileUrl: avatarUrl}
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            pushUserInfo(u1)
+            setLoading(false)
+            setCurrentEmail(u1.email)
+            Alert.alert("Success", "Account created successfully.")
+            console.log(currentEmail)
+            navigation.navigate('home')
+        } catch (error) {
+            console.error("Error creating account: ", error);
+            Alert.alert("Error", error.message);
+        }
+    };
 
 
     return (
@@ -68,7 +74,7 @@ export default function SetUpAccountPage({ navigation }) {
                 placeholder='Email Address' >
                     
              </TextInput>
-            <TextInput onChangeText={(text) => setPassword(text)} secureTextEntry={true} 
+            <TextInput autoCapitalize='none' onChangeText={(text) => setPassword(text)} secureTextEntry={true} 
                 style={styles.input} placeholder='Password' >
             </TextInput>
             <View style={{flexDirection:'row'}}>
@@ -86,10 +92,11 @@ export default function SetUpAccountPage({ navigation }) {
                 </View>
                 
             </View>
+            { isLoading && <ActivityIndicator size={30}></ActivityIndicator>}
             <View style={{marginTop:40, width:300}}>
                 <CustomButton title="Create Account" primary='true' onPress={handleCreateAccount}  ></CustomButton>
             </View>
-            <Button onPress={handleData}>Push Data</Button>
+            
            
                 
         </View>

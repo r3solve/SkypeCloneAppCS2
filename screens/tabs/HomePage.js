@@ -17,22 +17,14 @@ function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
   const { activeUser, activeUserObject, setAllUsers, allUsers } = useContext(CurrentUserContext);
-  const loggedInUser = activeUser;
   const [isLoading, setIsLoading] = useState(false);
   const { allMessagesByUser, setMessages } = useMessageStore();
-  const[fetchChats, setFetchChats] = useState([])
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
-        const data = await getAllUsers();
         const chatData = await getCreatorsOrReceivers(activeUser);
-        setAllUsers(data);
-        setMessages(chatData)
-        setFetchChats(chatData)
-        // console.log(chatData)
-        // console.log(allMessagesByUser)
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);

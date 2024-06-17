@@ -18,33 +18,14 @@ function ChatDetailsPage() {
   const [allThreadChats, setThreadChats] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
-  // useEffect(() => {
-  //   const unsub = onSnapshot(doc(db, "chats", id), (doc) => {
-  //     if (doc.exists()) {
-  //       setThreadChats(doc.data()?.allThreadChats || []);
-  //     }
-  //   });
-
-  //   // Cleanup subscription on unmount
-  //   return () => unsub();
-  // }, [id]);
-
-  // useLayoutEffect(() => {
-  //   const q = query(collection(db, 'chats', id, 'chats'));
-  //   const unsubscribe = onSnapshot(q, (snapshot) => {
-  //     const fetchedChats = snapshot.docs.map(doc => ({
-  //       id: doc.id(),
-  //       ...doc.data()
-  //     }));
-  //     setThreadChats((prev)=> [...prev,fetchedChats]);
-  //   });
-
-  //   // Cleanup subscription on unmount
-  //   return () => unsubscribe();
-  // }, [allThreadChats]);
 
   useEffect(()=> {
-    setThreadChats(chats)
+    fetchChats(id).then((res) => {
+      setThreadChats(res);
+      console.log(allThreadChats)
+    }).catch((err)=>{
+      console.log(err)
+    })
    }, [])
 
   const sendMessage = () => {
