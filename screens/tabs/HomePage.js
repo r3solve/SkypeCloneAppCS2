@@ -10,7 +10,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { CurrentUserContext } from "../../store/loggedInUserStore";
 import { getAllUserChats1, getAllUsers, getUser,getCreatorsOrReceivers } from "../../helpers/firebase";
 import useMessageStore from "../../store/FibaseMessages";
-
+import {fetchAllUsers} from '../../functions/firebase-queries'
+import { useUserCurrentStore, useCurrentDataStore } from "../../state/currentUserStore";
+import { db } from "../../functions/firebase-queries";
+import { getDocs, doc, collection } from "firebase/firestore";
 function HomePage() {
   const [isModalVisible, setModalVisible] = useState(false);
   const { allChats, setChats } = useContext(MessageContext);
@@ -19,20 +22,23 @@ function HomePage() {
   const { activeUser, activeUserObject, setAllUsers, allUsers } = useContext(CurrentUserContext);
   const [isLoading, setIsLoading] = useState(false);
   const { allMessagesByUser, setMessages } = useMessageStore();
+  const {currentEmail} = useUserCurrentStore();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
+      let allData = []
       try {
-        setIsLoading(true);
-        const chatData = await getCreatorsOrReceivers(activeUser);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        setIsLoading(false);
+        const querySnapshot = await getDocs(collection(db, 'users'));
+        querySnapshot.forEach((doc) => {
+          
+        });
+      } catch (err) {
+        console.error('Error fetching data: ', err);
       }
     };
-    fetchUsers();
-  }, [setAllUsers, allChats]);
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     // Prevent going back to login page after signing in

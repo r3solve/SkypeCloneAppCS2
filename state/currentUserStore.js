@@ -17,13 +17,11 @@ const useCurrentDataStore = create((set) => ({
     userObject: obj // this function sets the objects
   })),
   userMessages: [],// this refers to all the message by the user initailized at signin
-  updateUserMessages: (messages) => set((state) => ({
-    userMessages: [...state.userMessages, ...messages]
-  })),
+  addMessage: (msg) => set((state)=> ({userMessages: [...state.userMessages, msg]})),
   availbleUsers: [],// this refers to all the message by the user 
   updateAviableUsers: (user) => set((state) => ({
     availbleUsers: [...state.availbleUsers, user]
-  })),// this 
+  })),
   
 }));
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import AccountBar from '../../components/AccountBar';
 import { useNavigation } from '@react-navigation/native';
@@ -7,30 +7,42 @@ import { MessageContext } from '../../store/messageStore';
 import { CurrentUserContext } from '../../store/loggedInUserStore';
 import { pushChat } from '../../helpers/http';
 import Color from '../../constants/Color';
-import { getAllUsers } from '../../helpers/firebase';
+import { getDocs, doc, collection } from "firebase/firestore";
 import useMessageStore from '../../store/FibaseMessages';
+import { db, uploadChat } from "../../functions/firebase-queries";
+import { useCurrentDataStore, useUserCurrentStore } from '../../state/currentUserStore';
+
 
 const CallsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const {  allChats } = useContext(MessageContext);
   const navigation = useNavigation();
-  const { activeUser, allUsers, setAllUsers } = useContext(CurrentUserContext); // Destructure activeUser and setAllUsers
-  const { allMessagesByUser, addAChat} = useMessageStore()
+  const { activeUser, allUsers } = useContext(CurrentUserContext); // Destructure activeUser and setAllUsers
+  const [isLoading, setLoading] = useState(false)
+  const {updateUserMessages, updateAviableUsers, availbleUsers, userMessages, addMessage} = useCurrentDataStore()
+  const {currentEmail} = useUserCurrentStore()
+
   useEffect(() => {
-    // Fetch all users when the component mounts
-    const fetchUsers = async () => {
+    const fetchData = async () => {
+      let allData = []
       try {
-        const data = await getAllUsers(); // Assuming getAllUsers function fetches all users
-        setAllUsers(data); // Update context state with fetched users
-        console.log(allMessagesByUser)
-      } catch (error) {
-        console.error('Error fetching users:', error);
+        setLoading(true)
+        const querySnapshot = await getDocs(collection(db, 'users'));
+        querySnapshot.forEach((doc) => {
+          allData.push(doc.data())
+          setResults(allData)
+          updateAviableUsers(allData)
+        setLoading(false)
+        });
+      } catch (err) {
+        Alert.alert("Could Not Load User Data")
       }
     };
 
-    fetchUsers();
-  }, []); // Empty dependency array ensures it runs only once when component mounts
+    fetchData();
+  }, []);
+// Empty dependency array ensures it runs only once when component mounts
 
   const handleFilter = (text) => {
     setSearchQuery(text);
@@ -48,29 +60,31 @@ const CallsPage = () => {
   };
   
 
-  const addUserToChats = (user) => {
-    const existingChat = allChats.find((chat) => chat.receiver === user.username);
+  function addUserToChats(user){
+      const existingChat = userMessages.find((chat) => chat.receiver === user.username)
+      if (existingChat) {
+          navigation.navigate('thread', { id: existingChat.id });
+          return
+      }else {
+        const uniqueId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        let newChat = {
+          id: uniqueId,
+          createdAt: new Date().toDateString(),
+          createdBy: currentEmail,
+          receiver: user.username,
+          link: `cloud/${Date.now()}`,
+          chats: [],
+        }
+        uploadChat(newChat.id, newChat.createdBy, newChat.receiver, newChat.link, newChat.chats)
+        addMessage(newChat)
+        console.log(userMessages)
+        console.log("Chat Added")
+      }
 
-    if (existingChat) {
-      navigation.navigate('thread', { id: existingChat.id });
-    } else {
-      const uniqueId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const newChat = {
-        id: uniqueId,
-        creaatedAt: new Date().toDateString(),
-        createdBy: activeUser,
-        receiver: user.email,
-        link: `cloud/${Date.now()}`,
-        chats: [],
-      };
-      addAChat(newChat)
-      console.log(allMessagesByUser)
-      pushChat(newChat.id, newChat.createdBy, newChat.receiver, newChat.link, newChat.chats);      navigation.navigate('thread', { id: newChat.id, username: newChat.receiver });
-    }
-  };
+  }
 
   const renderItem = ({ item }) => (
-    <AccountBar onPress={() => addUserToChats(item)} user={'@' + item.username}>
+    <AccountBar onPress={()=> addUserToChats(item)} user={'@' + item.username}>
       {item.bio}
     </AccountBar>
   );
@@ -84,7 +98,8 @@ const CallsPage = () => {
         value={searchQuery}
         placeholderTextColor="grey"
       />
-      {searchQuery.length === 0 && (
+      {isLoading && <ActivityIndicator size={30}></ActivityIndicator>}
+      {results.length === 0 && (
         <View style={styles.noContentTextContainer}>
           <Text style={styles.noContentText}>Search for User</Text>
         </View>
@@ -92,7 +107,7 @@ const CallsPage = () => {
       <FlatList
         data={results}
         renderItem={renderItem}
-        keyExtractor={(item) => (item && item.id ? item.id.toString() : null)}
+        keyExtractor={(item) => (item && item.email ? item.email.toString() : null)}
       />    
     </View>
   );
