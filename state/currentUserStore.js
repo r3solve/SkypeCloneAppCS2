@@ -22,6 +22,7 @@ const useCurrentDataStore = create((set) => ({
   updateAviableUsers: (user) => set((state) => ({
     availbleUsers: [...state.availbleUsers, user]
   })),
+  initailizeMessages: (msg=> set((state)=> ({userMessages: [...state.userMessages, msg]}))),
   
 }));
 

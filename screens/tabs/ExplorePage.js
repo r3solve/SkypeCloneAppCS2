@@ -77,8 +77,7 @@ const CallsPage = () => {
         }
         uploadChat(newChat.id, newChat.createdBy, newChat.receiver, newChat.link, newChat.chats)
         addMessage(newChat)
-        console.log(userMessages)
-        console.log("Chat Added")
+        navigation.navigate('thread', { id: newChat.id, username: newChat.receiver, link: newChat.link });
       }
 
   }

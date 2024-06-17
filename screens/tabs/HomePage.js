@@ -6,14 +6,11 @@ import Color from "../../constants/Color";
 import { Ionicons } from "@expo/vector-icons";
 import AccountBar from "../../components/AccountBar";
 import { MessageContext } from "../../store/messageStore";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation} from "@react-navigation/native";
 import { CurrentUserContext } from "../../store/loggedInUserStore";
-import { getAllUserChats1, getAllUsers, getUser,getCreatorsOrReceivers } from "../../helpers/firebase";
 import useMessageStore from "../../store/FibaseMessages";
-import {fetchAllUsers} from '../../functions/firebase-queries'
+import {downloadAllChats} from '../../functions/firebase-queries'
 import { useUserCurrentStore, useCurrentDataStore } from "../../state/currentUserStore";
-import { db } from "../../functions/firebase-queries";
-import { getDocs, doc, collection } from "firebase/firestore";
 function HomePage() {
   const [isModalVisible, setModalVisible] = useState(false);
   const { allChats, setChats } = useContext(MessageContext);
@@ -21,17 +18,17 @@ function HomePage() {
   const navigation = useNavigation();
   const { activeUser, activeUserObject, setAllUsers, allUsers } = useContext(CurrentUserContext);
   const [isLoading, setIsLoading] = useState(false);
-  const { allMessagesByUser, setMessages } = useMessageStore();
   const {currentEmail} = useUserCurrentStore();
-
+  const {initailizeMessages, userMessages} = useCurrentDataStore()
+  const [fetchedData, setFetechData] = useState([])
   useEffect(() => {
     const fetchData = async () => {
-      let allData = []
       try {
-        const querySnapshot = await getDocs(collection(db, 'users'));
-        querySnapshot.forEach((doc) => {
-          
-        });
+        setIsLoading(true);
+        addData = await downloadAllChats(currentEmail)
+        setFetechData(addData)
+        initailizeMessages(fetchData)
+        setIsLoading(false)
       } catch (err) {
         console.error('Error fetching data: ', err);
       }
@@ -58,8 +55,8 @@ function HomePage() {
     return (
       <ChatComponent
         onPress={() => navigation.navigate('thread', { username: item.receiver ,id:item.id, chats:item.chats })}
-        user={`${item.createdBy}/${item.receiver}`}
-        message={item.chats.length > 0 ? item.chats[0].content : "No messages yet"}
+        user={`${item?.createdBy}/${item.receiver}`}
+        message={item?.chats.length > 0 ? item?.chats[0].content : "No messages yet"}
       />
     );
   };
@@ -76,7 +73,7 @@ function HomePage() {
       </View>
       {isLoading && <ActivityIndicator size={50} />}
         <FlatList
-          data={allMessagesByUser}
+          data={fetchedData}
           renderItem={renderItem}
           keyExtractor={item => item.sender}
         />
