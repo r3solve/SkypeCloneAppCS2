@@ -1,11 +1,15 @@
-import React, { act, useContext, useState } from "react";
+import React, {useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Button, Text, View, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { Button, Text, View, TextInput, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from "react-native";
 import Color from "../constants/Color";
 import CustomButton from "../components/CustomButton";
 import { CurrentUserContext } from "../store/loggedInUserStore";
 import { loginUser } from "../helpers/http";
 import { getUser } from "../helpers/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../functions/firebase-queries";
+import { useUserCurrentStore, useCurrentDataStore } from "../state/currentUserStore";
+
 const DATA = [
     { id: 1, bio: "Coffee addict ☕, code lover 💻", user: 'Jane Doe', username: 'janed', email: 'jane.doe@example.com', dateOfBirth: '1990-05-14', password: 'password1' },
     { id: 2, bio: "Tech geek 🤓, always exploring 🚀", user: 'Thomas Hanks', username: 'thomash', email: 'thomas.hanks@example.com', dateOfBirth: '1985-03-22', password: 'password2' },
@@ -36,19 +40,34 @@ const DATA = [
     const [password, setPassword] = useState('');
     const userContext = useContext(CurrentUserContext)
     const {activeUser, setActiveUser} = useContext(CurrentUserContext)
+    const [isLoading, setLoading] = useState(false)
+    const {setCurrentEmail, currentEmail} = useUserCurrentStore()
+    const {userObject, setUserObject, userMessages, UpdateUserMessages, availableUsers, updateAvailableUsers} = useCurrentDataStore()
 
     const handleSignIn = () => {
-        loginUser(email, password)
-          .then((user) => {
-            // Assuming setActiveUser expects a user object
-            setActiveUser(email)
-            console.log(activeUser)
-            navigation.navigate('home'); 
-          })
-          .catch((error) => {
-            // Optionally, display the error message in the UI
-            alert('Login failed: ' + error.code);
-          });
+        try {
+            setLoading(true);
+            signInWithEmailAndPassword(auth, email, password).then((res)=> {
+            setCurrentEmail(res.user.email);
+            setLoading(false);
+            navigation.navigate('home');
+            })
+          } catch (err) {
+            console.log(err);
+            alert('Login failed: ' + err.message); // Optionally display the error message in the UI
+            setLoading(false);
+          }
+        // loginUser(email, password)
+        //   .then((user) => {
+        //     // Assuming setActiveUser expects a user object
+        //     setActiveUser(email)
+        //     console.log(activeUser)
+        //     navigation.navigate('home'); 
+        //   })
+        //   .catch((error) => {
+        //     // Optionally, display the error message in the UI
+        //     alert('Login failed: ' + error.code);
+        //   });
       };
 
     return (
@@ -73,6 +92,7 @@ const DATA = [
             <TouchableOpacity style={styles.forgotPassword} onPress={() => {/* Add forgot password logic */}}>
                 <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
+           { isLoading && <ActivityIndicator size={30}></ActivityIndicator>}
             <CustomButton title="Sign In" primary={true} onPress={handleSignIn} />
             <TouchableOpacity style={styles.signUp} onPress={()=> navigation.navigate('register')}>
                 <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>

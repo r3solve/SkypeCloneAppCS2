@@ -21,7 +21,7 @@ const useCurrentDataStore = create((set) => ({
     userMessages: [...state.userMessages, ...messages]
   })),
   availbleUsers: [],// this refers to all the message by the user 
-  updateAviable: (user) => set((state) => ({
+  updateAviableUsers: (user) => set((state) => ({
     availbleUsers: [...state.availbleUsers, user]
   })),// this 
   
