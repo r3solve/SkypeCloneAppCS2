@@ -56,13 +56,16 @@ function ChatDetailsPage() {
 
   return (
     <View behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
-      <FlatList
+     <FlatList
         data={allThreadChats}
-        renderItem={({item}) => <View>
-          <Text>{item.sender}</Text>
-          <Text>{item.content}</Text>
-        </View>}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={[styles.messageContainer, item.sender === currentEmail ? styles.myMessage : styles.otherMessage]}>
+            <Text style={styles.messageText}>{item.content}</Text>
+            <Text style={styles.timeText} >{item?.createdAt}</Text>
+          </View>
+        )}
+        style={styles.messagesList}
       />
       
       <View style={styles.inputContainer}>
