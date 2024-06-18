@@ -16,11 +16,12 @@ function ChatDetailsPage() {
   const route = useRoute();
   const { id,  username, chats } = route.params; // Destructure id from route params
   const userContext = useContext(CurrentUserContext)
-  const { activeUser, allUsers, setAllUsers } = userContext; // Destructure activeUser and setAllUsers
   const [allThreadChats, setThreadChats] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const {currentEmail} = useUserCurrentStore();
+  const [currentsent, setCurrentSent] = useState([])
 
+  
 
   useEffect(() => {
     async function fetchInitialData() {
@@ -33,7 +34,12 @@ function ChatDetailsPage() {
               allChats.push({ ...data.data().chats });
             }
           });
-          setThreadChats(chats);
+          if (currentsent.length === 0 ){
+            setThreadChats(chats);
+          }else {
+            chats = currentsent + chats
+            setThreadChats(chats)
+          }
         });
         return unsubscribe;
       } catch (err) {
@@ -48,7 +54,7 @@ function ChatDetailsPage() {
   const sendMessage = () => {
     if (newMessage.trim() !== '') {
       const message = { id: `${allThreadChats.length + 1}`, sender: currentEmail, receiver: username, content: newMessage, createdAtTime: new Date().toLocaleTimeString(), createdAtDate: new Date().toDateString() };
-      setThreadChats((prev) => [...prev, message]);
+      setCurrentSent((prev) => [...prev, message]);
       updateMessages(id, [...allThreadChats, message]);
       setNewMessage('');
     }
@@ -62,7 +68,6 @@ function ChatDetailsPage() {
         renderItem={({ item }) => (
           <View style={[styles.messageContainer, item.sender === currentEmail ? styles.myMessage : styles.otherMessage]}>
             <Text style={styles.messageText}>{item.content}</Text>
-            <Text style={styles.timeText} >{item?.createdAt}</Text>
           </View>
         )}
         style={styles.messagesList}
@@ -111,7 +116,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   messageContainer: {
-    borderRadius: 15,
+    borderRadius: 10,
     padding: 12,
     marginBottom: 10,
     maxWidth: '80%',
@@ -119,6 +124,12 @@ const styles = StyleSheet.create({
   myMessage: {
     backgroundColor: Color.primary_color,
     alignSelf: 'flex-end',
+  },
+  otherMessage: {
+    marginVertical: 15,
+    backgroundColor: '#729199',
+    alignSelf: 'flex-start',
+    
   },
   messageText: {
     color: 'white',

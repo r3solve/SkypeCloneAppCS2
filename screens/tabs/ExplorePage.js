@@ -71,7 +71,7 @@ const CallsPage = () => {
           id: uniqueId,
           createdAt: new Date().toDateString(),
           createdBy: currentEmail,
-          receiver: user.username,
+          receiver: user.email,
           link: `cloud/${Date.now()}`,
           chats: [],
         }
