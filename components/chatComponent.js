@@ -8,7 +8,7 @@ const ChatComponent  = props => {
         <View style={styles.appContainer}>
             <Pressable onPress={props.onPress} >
             <View style={styles.chatContainer} >
-            <Image style={styles.imageContainer} source={require('../assets/profile.jpg')} ></Image>
+            <Image style={styles.imageContainer} source={{uri: props.uri}} ></Image>
                 <View style={styles.textContainer} >
                     <Text style={{fontWeight:'bold', paddingHorizontal: 4, paddingVertical:3}}>{props.user}</Text>
                     <Text> {props.message}</Text>

@@ -82,6 +82,7 @@ function HomePage() {
         onPress={() => navigation.navigate('thread', { username: item.receiver ,id:item.id, chats:item.chats })}
         user={`${item?.createdBy}/${item.receiver}`}
         message={item?.chats.length > 0 ? item?.chats[(item?.chats.length -1)].content : "No messages yet"}
+        uri={item?.profileUrl}
       />
     );
   };
@@ -100,7 +101,7 @@ function HomePage() {
         <FlatList
           data={fetchedData}
           renderItem={renderItem}
-          keyExtractor={item => item.sender}
+          keyExtractor={item => item.id}
         />
       <Modal animationType="slide" transparent={true} visible={isModalVisible} style={{ height: "70%" }}>
         <View style={styles.modalContainer}>

@@ -5,74 +5,73 @@ import { Ionicons } from '@expo/vector-icons';
 import Color from '../constants/Color';
 import { MessageContext } from '../store/messageStore';
 import { CurrentUserContext } from '../store/loggedInUserStore'
-import { updateMessages, fetchChats } from '../helpers/firebase';
-import { doc, collection, onSnapshot, query , where, getDocs} from "firebase/firestore";
-import { db } from '../functions/firebase-queries'
-import { downloadAllChats } from '../functions/firebase-queries';
+import { updateMessages } from '../helpers/firebase';
+import { doc, collection, onSnapshot, query } from "firebase/firestore";
+import { db } from '../functions/firebase-queries';
 import { useUserCurrentStore } from '../state/currentUserStore';
+
 function ChatDetailsPage() {
   const navigation = useNavigation();
   const { addMessage, allChats } = useContext(MessageContext);
   const route = useRoute();
-  const { id,  username, chats } = route.params; // Destructure id from route params
+  const { id, username, chats } = route.params; // Destructure id from route params
   const userContext = useContext(CurrentUserContext)
-  const [allThreadChats, setThreadChats] = useState([]);
+  const [allThreadChats, setThreadChats] = useState(chats);
   const [newMessage, setNewMessage] = useState('');
-  const {currentEmail} = useUserCurrentStore();
-  const [currentsent, setCurrentSent] = useState([])
-
+  const { currentEmail } = useUserCurrentStore();
   
-
+  
   useEffect(() => {
-    async function fetchInitialData() {
-      try {
-        let allChats = []
-        const q = query(collection(db, "chats"));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-          querySnapshot.forEach((data) => {
-            if (data.id == id) {
-              allChats.push({ ...data.data().chats });
-            }
-          });
-          if (currentsent.length === 0 ){
-            setThreadChats(chats);
-          }else {
-            chats = currentsent + chats
-            setThreadChats(chats)
-          }
-        });
-        return unsubscribe;
-      } catch (err) {
-        console.error("Error fetching chats", err);
-      }
-    }
-    
-    fetchInitialData();
-  }, [])
-  
+    const q = query(collection(db, "chats"));
 
-  const sendMessage = () => {
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const updatedChats = [];
+      querySnapshot.forEach((data) => {
+        if (data.id == id) {
+          updatedChats.push(...data.data().chats);
+        }
+      });
+      setThreadChats(updatedChats);
+    });
+
+    return () => unsubscribe();
+  }, [id]);
+
+  const sendMessage = async () => {
     if (newMessage.trim() !== '') {
-      const message = { id: `${allThreadChats.length + 1}`, sender: currentEmail, receiver: username, content: newMessage, createdAtTime: new Date().toLocaleTimeString(), createdAtDate: new Date().toDateString() };
-      setCurrentSent((prev) => [...prev, message]);
-      updateMessages(id, [...allThreadChats, message]);
-      setNewMessage('');
+      const message = {
+        id: `${allThreadChats.length + 1}`,
+        sender: currentEmail,
+        receiver: username,
+        content: newMessage,
+        createdAtTime: new Date().toLocaleTimeString(),
+        createdAtDate: new Date().toDateString(),
+      };
+
+      try {
+        await updateMessages(id, [...allThreadChats, message]);
+        setThreadChats((prevChats) => [...prevChats, message]);
+        setNewMessage('');
+      } catch (err) {
+        console.error("Error sending message", err);
+      }
     }
   };
 
   return (
     <View behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
-     <FlatList
+      <FlatList
         data={allThreadChats}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={[styles.messageContainer, item.sender === currentEmail ? styles.myMessage : styles.otherMessage]}>
             <Text style={styles.messageText}>{item.content}</Text>
+            <Text style={styles.timeText}>{item.createdAtTime}</Text>
           </View>
         )}
         style={styles.messagesList}
       />
-      
+
       <View style={styles.inputContainer}>
         <Ionicons
           name="camera"
@@ -129,18 +128,14 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     backgroundColor: '#729199',
     alignSelf: 'flex-start',
-    
   },
   messageText: {
     color: 'white',
-  
   },
-  timeText:{
-    color:' white',
+  timeText: {
+    color: 'white',
     fontSize: 12,
-
-  }
-  ,
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
