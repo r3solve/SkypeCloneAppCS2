@@ -14,7 +14,7 @@ function ChatDetailsPage() {
   const navigation = useNavigation();
   const { addMessage, allChats } = useContext(MessageContext);
   const route = useRoute();
-  const { id,  username, link } = route.params; // Destructure id from route params
+  const { id,  username, chats } = route.params; // Destructure id from route params
   const userContext = useContext(CurrentUserContext)
   const { activeUser, allUsers, setAllUsers } = userContext; // Destructure activeUser and setAllUsers
   const [allThreadChats, setThreadChats] = useState([]);
@@ -33,7 +33,7 @@ function ChatDetailsPage() {
               allChats.push({ ...data.data().chats });
             }
           });
-          setThreadChats(allChats);
+          setThreadChats(chats);
         });
         return unsubscribe;
       } catch (err) {
