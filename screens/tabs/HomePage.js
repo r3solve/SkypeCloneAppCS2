@@ -9,8 +9,10 @@ import { MessageContext } from "../../store/messageStore";
 import { useNavigation} from "@react-navigation/native";
 import { CurrentUserContext } from "../../store/loggedInUserStore";
 import useMessageStore from "../../store/FibaseMessages";
-import {downloadAllChats} from '../../functions/firebase-queries'
+import {db} from '../../functions/firebase-queries'
 import { useUserCurrentStore, useCurrentDataStore } from "../../state/currentUserStore";
+import { onSnapshot, or , where, collection , query} from "firebase/firestore";
+
 function HomePage() {
   const [isModalVisible, setModalVisible] = useState(false);
   const { allChats, setChats } = useContext(MessageContext);
@@ -21,21 +23,44 @@ function HomePage() {
   const {currentEmail} = useUserCurrentStore();
   const {initailizeMessages, userMessages} = useCurrentDataStore()
   const [fetchedData, setFetechData] = useState([])
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        addData = await downloadAllChats(currentEmail)
-        setFetechData(addData)
-        initailizeMessages(fetchData)
-        setIsLoading(false)
+        const q = query(
+          collection(db, "chats"),
+          or(where("receiver", "==", currentEmail), where("createdBy", "==", currentEmail))
+        );
+
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          let allChats = [];
+          querySnapshot.forEach((data) => {
+            allChats.push({ id: data.id, ...data.data() });
+          });
+          setFetechData(allChats);
+          initailizeMessages(allChats);
+          setIsLoading(false);
+        }, (err) => {
+          console.error("Error fetching chats: ", err);
+          setIsLoading(false);
+        });
+
+        return unsubscribe;
       } catch (err) {
         console.error('Error fetching data: ', err);
+        setIsLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    const unsubscribe = fetchData();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [currentEmail])
 
   useEffect(() => {
     // Prevent going back to login page after signing in
@@ -56,7 +81,7 @@ function HomePage() {
       <ChatComponent
         onPress={() => navigation.navigate('thread', { username: item.receiver ,id:item.id, chats:item.chats })}
         user={`${item?.createdBy}/${item.receiver}`}
-        message={item?.chats.length > 0 ? item?.chats[0].content : "No messages yet"}
+        message={item?.chats.length > 0 ? item?.chats[(item?.chats.length -1)].content : "No messages yet"}
       />
     );
   };

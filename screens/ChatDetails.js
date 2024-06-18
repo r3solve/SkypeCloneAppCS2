@@ -1,46 +1,53 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Button, FlatList, Text, TextInput, View, StyleSheet, Platform, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import Color from '../constants/Color';
 import { MessageContext } from '../store/messageStore';
 import { CurrentUserContext } from '../store/loggedInUserStore'
-import { updateMessages, db, fetchChats } from '../helpers/firebase';
-import { doc,collection, onSnapshot, query } from "firebase/firestore";
-
+import { updateMessages, fetchChats } from '../helpers/firebase';
+import { doc, collection, onSnapshot, query , where, getDocs} from "firebase/firestore";
+import { db } from '../functions/firebase-queries'
+import { downloadAllChats } from '../functions/firebase-queries';
+import { useUserCurrentStore } from '../state/currentUserStore';
 function ChatDetailsPage() {
   const navigation = useNavigation();
   const { addMessage, allChats } = useContext(MessageContext);
   const route = useRoute();
-  const { id, chats, username } = route.params; // Destructure id from route params
+  const { id,  username, link } = route.params; // Destructure id from route params
   const userContext = useContext(CurrentUserContext)
   const { activeUser, allUsers, setAllUsers } = userContext; // Destructure activeUser and setAllUsers
   const [allThreadChats, setThreadChats] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const {currentEmail} = useUserCurrentStore();
 
 
-  useEffect(()=> {
-    fetchChats(id).then((res) => {
-      setThreadChats(res);
-      console.log(allThreadChats)
-    }).catch((err)=>{
-      console.log(err)
-    })
-   }, [])
+  useEffect(() => {
+    async function fetchInitialData() {
+      try {
+        let allChats = []
+        const q = query(collection(db, "chats"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          querySnapshot.forEach((data) => {
+            if (data.id == id) {
+              allChats.push({ ...data.data().chats });
+            }
+          });
+          setThreadChats(allChats);
+        });
+        return unsubscribe;
+      } catch (err) {
+        console.error("Error fetching chats", err);
+      }
+    }
+    
+    fetchInitialData();
+  }, [])
+  
 
   const sendMessage = () => {
     if (newMessage.trim() !== '') {
-      const message = { id: `${messages.length + 1}`, text: newMessage, sender: activeUser };
-      addMessage(id, message); // Add message to context
-      setThreadChats((prev) => [...prev, message]); // Update local state
-      updateMessages(id, [...allThreadChats, message]); // Update Firestore
-      setNewMessage('');
-    }
-  };
-
-  const createAMessage = (contentText) => {
-    if (newMessage.trim() !== '') {
-      const message = { id: `${allThreadChats.length + 1}`, sender: activeUser, receiver: username, content: contentText, createdAtTime:new Date().toLocaleTimeString(), createdAtDate: new Date().toDateString() };
+      const message = { id: `${allThreadChats.length + 1}`, sender: currentEmail, receiver: username, content: newMessage, createdAtTime: new Date().toLocaleTimeString(), createdAtDate: new Date().toDateString() };
       setThreadChats((prev) => [...prev, message]);
       updateMessages(id, [...allThreadChats, message]);
       setNewMessage('');
@@ -51,15 +58,13 @@ function ChatDetailsPage() {
     <View behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <FlatList
         data={allThreadChats}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={[styles.messageContainer, item.sender === activeUser ? styles.myMessage : styles.otherMessage]}>
-            <Text style={styles.messageText}>{item.content}</Text>
-            <Text style={styles.timeText} >{item?.createdAt}</Text>
-          </View>
-        )}
-        style={styles.messagesList}
+        renderItem={({item}) => <View>
+          <Text>{item.sender}</Text>
+          <Text>{item.content}</Text>
+        </View>}
+        keyExtractor={item => item.id}
       />
+      
       <View style={styles.inputContainer}>
         <Ionicons
           name="camera"
@@ -72,7 +77,7 @@ function ChatDetailsPage() {
           name="attach"
           size={25}
           color={Color.primary_color}
-          onPress={() => Alert.alert('Attach pressed', activeUser)} // Placeholder for attachment functionality
+          onPress={() => Alert.alert('Attach pressed', id)} // Placeholder for attachment functionality
           style={styles.sendButton}
         />
         <TextInput
@@ -85,14 +90,13 @@ function ChatDetailsPage() {
           name="send"
           size={25}
           color={Color.primary_color}
-          onPress={() => createAMessage(newMessage)}
+          onPress={sendMessage}
           style={styles.sendButton}
         />
       </View>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {

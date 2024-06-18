@@ -1,6 +1,6 @@
 import React, {useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Button, Text, View, TextInput, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from "react-native";
+import { Button, Text, View, TextInput, TouchableOpacity, StyleSheet, Image, ActivityIndicator, KeyboardAvoidingView } from "react-native";
 import Color from "../constants/Color";
 import CustomButton from "../components/CustomButton";
 import { CurrentUserContext } from "../store/loggedInUserStore";
@@ -45,7 +45,7 @@ import { useUserCurrentStore, useCurrentDataStore } from "../state/currentUserSt
             <Text style={styles.title}>Sign In</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Username"
+                placeholder="Email"
                 value={email}
                 onChangeText={setUsername}
                 autoCapitalize="none"
